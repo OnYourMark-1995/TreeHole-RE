@@ -25,7 +25,7 @@ const clickLike = () => {
 </script>
 
 <template>
-  <div class="message-card-wrap">
+  <li class="message-card-wrap">
     <div class="message-avatar-part">
       <Avatar :img-src="message.avatarImg" radius="55px" border-color="var(--theme_light_color)"/>
     </div>
@@ -52,7 +52,7 @@ const clickLike = () => {
         <span class="message-content">{{ message.content }}</span>
       </div>
     </div>
-  </div>
+  </li>
 </template>
 
 <style scoped>

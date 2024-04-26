@@ -1,10 +1,11 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-import Avatar from './common/Avatar.vue';
-import MyButton from './common/MyButton.vue';
-import Menu from './menu/Menu.vue';
-import MenuItem from './menu/MenuItem.vue'
+import Avatar from '../../components/common/Avatar.vue';
+import MyButton from '../../components/common/MyButton.vue';
+import Menu from '../../components/menu/Menu.vue';
+import MenuItem from '../../components/menu/MenuItem.vue'
 
 const props = defineProps({
   user: {
@@ -14,6 +15,8 @@ const props = defineProps({
 })
 
 const menuModel = ref('sended-message')
+
+const router = useRouter()
 </script>
 
 <template>
@@ -31,7 +34,7 @@ const menuModel = ref('sended-message')
         </div>
 
         <div class="user-info-main-right">
-          <MyButton plain-style class="user-info-setting-button">设置</MyButton>
+          <MyButton plain-style class="user-info-setting-button" @click="() => router.push('/setting')">设置</MyButton>
         </div>
       </div>
     </div>
@@ -53,6 +56,7 @@ const menuModel = ref('sended-message')
   border-top-right-radius: 8px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.30);
 
+  box-sizing: border-box;
   padding: 10px 15px;
 }
 

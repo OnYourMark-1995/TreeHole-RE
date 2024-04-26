@@ -5,10 +5,12 @@ create table user_table (
 	username varchar(30) not null unique comment "用户名是唯一的",
     `password` varchar(30) not null,
     email varchar(30) not null unique,
-    sex enum('man', 'woman', 'secret') not null default 'secret' comment "性别，默认为 ‘秘密’",
+    gender enum('man', 'woman', 'secret') not null default 'secret' comment "性别，默认为 ‘秘密’",
     avatar_img varchar(50) not null comment "头像图片文件名",
     primary key(user_id)
 );
+
+-- alter table user_table change columgendern sex gender enum('man', 'woman', 'secret') not null default 'secret' comment "性别，默认为 ‘秘密’";
 
 insert into user_table (username, `password`, email, avatar_img) 
 values ('asuka', 'Abc123456', '1234@qq.com', 'default.jpg');
@@ -16,6 +18,8 @@ insert into user_table (username, `password`, email, avatar_img)
 values ('chan', '654321', 'abc@qq.com', 'default2.jpg');
 insert into user_table (username, `password`, email, avatar_img) 
 values ('susan说', '8888888', 'abcdef@163.com', 'default2.jpg');
+insert into user_table (username, `password`, email, avatar_img) 
+values ('i\'m ok', '8888888', 'i\'m_ok@2000.com', 'default.jpg');
 
 
 create table message_table (

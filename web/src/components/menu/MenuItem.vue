@@ -2,6 +2,7 @@
 import { inject } from 'vue';
 
 const props = defineProps({
+  // index 当前菜单项的唯一索引，结合 currentIndex 决定菜单项是否高亮
   index: {
     type: [String, Number],
     required: true
@@ -49,11 +50,15 @@ function menuItemClick() {
 }
 
 .menu-item:hover{
-  filter: brightness(1.1);
+  filter: brightness(0.95);
 }
 
 .menu-item-active{
   background-color: var(--theme_light_color);
   color: white;
+}
+
+.menu-item-active:hover{
+  filter: brightness(1.1);
 }
 </style>

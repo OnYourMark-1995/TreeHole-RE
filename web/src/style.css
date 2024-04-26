@@ -38,6 +38,12 @@ body {
   min-width: 1000px;
 }
 
+@media screen and (max-width: 1080px) {
+  body{
+    min-width: auto;
+  }
+}
+
 #app {
   width: 100%;
   min-height: 100vh;

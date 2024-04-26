@@ -1,9 +1,7 @@
 <script setup>
-import Logo from './Logo.vue'
-import MyButton from './common/MyButton.vue';
-import Avatar from './common/Avatar.vue';
-import defaultAvatar from '../assets/defaultAvatar.png';
-
+import Logo from '../../components/Logo.vue'
+import MyButton from '../../components/common/MyButton.vue';
+import UserAvatar from './UserAvatar.vue';
 
 </script>
 
@@ -14,7 +12,7 @@ import defaultAvatar from '../assets/defaultAvatar.png';
     </div>
     
     <div class="right-content">
-      <Avatar radius="40px" :imgSrc="defaultAvatar" style="cursor: pointer;" />
+      <UserAvatar />
       <MyButton>退出登录</MyButton>
     </div>
   </header>

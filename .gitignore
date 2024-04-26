@@ -15,6 +15,9 @@ dist-ssr
 test
 注意.md
 *.zip
+avatarImg-*
+Test.vue
+Test*.vue
 
 # Editor directories and files
 .vscode/*

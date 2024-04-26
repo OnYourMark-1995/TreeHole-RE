@@ -40,13 +40,9 @@ class SqlExecuteTool {
    * @returns sql 语句执行结果
    */
   async sqlExecute (sql, paramArray) {
-    try {
-      // 漏掉这个 await 害我测试了好久。。。
-      // 这里的异步操作如果没有await，下一个trycatch中的this.mysqlConnection没有值
-      await this.getConnection()
-    } catch (error) {
-      throw error
-    }
+    // 漏掉这个 await 害我测试了好久。。。
+    // 这里的异步操作如果没有await，下一个trycatch中的this.mysqlConnection没有值
+    await this.getConnection()
 
     try {
       const [results, field] = await this.mysqlConnection.execute(sql, paramArray)

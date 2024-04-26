@@ -11,6 +11,12 @@ const menuModel = ref('sended-message')
 <script setup>
 import { provide, readonly } from 'vue';
 
+const props = defineProps({
+  vertical: {
+    type: Boolean,
+  }
+})
+
 // 该参数决定哪个 MenuItem 高亮显示
 const currentIndex = defineModel('currentIndex', {
   type: [String, Number],
@@ -30,7 +36,10 @@ provide('current-index', {
 </script>
 
 <template>
-  <ul class="menu-bar">
+  <ul 
+    class="menu-bar"
+    :class="{ 'menu-vertival': vertical }"
+  >
     <slot></slot>
   </ul>
 </template>
@@ -38,8 +47,14 @@ provide('current-index', {
 <style scoped>
 .menu-bar{
   display: flex;
+  align-items: center;
+
   width: 100%;
   margin: 0;
   padding: 0;
+}
+
+.menu-vertival{
+  flex-direction: column;
 }
 </style>

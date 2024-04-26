@@ -10,11 +10,23 @@ const props = defineProps({
   plainStyle: Boolean, 
   noBorder: Boolean
 })
+
+/*  
+  一定要在 defineEmits 中注册 click 事件，否则在父组件中绑定的 @click 
+  会被 透传 到当前组件的根元素上（详见vue3文档关于透传的介绍），同时因为
+  在当前组件的根元素上已经绑定了一个 @click，导致根元素上绑定了两次click事件
+  点击按钮会触发两个 click事件绑定的函数。
+*/
+const emits = defineEmits(['click'])
+
 </script>
 
 <template>
-  <button @click.prevent="() => clickAction()" 
-    class="button"
+  <!-- 将 type 设置为 ‘button’，就可以防止在表单中使用按钮触发默认事件 -->
+  <button 
+    type="button"
+    @click="$emit('click')" 
+    class="my-button"
     :class="[ plainStyle ? 'plain-button' : 'general-button' ]" 
     :style="{
       width: width,
@@ -28,7 +40,7 @@ const props = defineProps({
 </template>
 
 <style scoped>
-.button{
+.my-button{
   cursor: pointer;
 
   box-sizing: border-box;
@@ -38,8 +50,8 @@ const props = defineProps({
   border-style: solid;
 
   font-size: 16px;
-
   font-family: var(--font_family);
+  letter-spacing: 2px;
 }
 
 .general-button{

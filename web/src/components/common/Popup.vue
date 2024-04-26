@@ -36,7 +36,7 @@ const closePopUp = () => {
   
 </template>
 
-<style scoped>
+<style>
 .popup-mask{
   position: fixed;
   inset: 0;

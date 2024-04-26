@@ -1,6 +1,6 @@
 <script setup>
-import Header from './components/Header.vue';
-import Footer from './components/Footer.vue';
+import Header from './layout/header/Header.vue';
+import Footer from './layout/footer/Footer.vue';
 import { RouterView } from 'vue-router';
 
 </script>
@@ -8,7 +8,7 @@ import { RouterView } from 'vue-router';
 <template>
   <Header id="header"/>
   <main id="main">
-    <router-view></router-view>
+    <router-view class="main-content"></router-view>
   </main>
   <Footer id="footer"/>
 </template>
@@ -27,6 +27,19 @@ import { RouterView } from 'vue-router';
   background-image: url('./assets/魔女宅急便壁纸.jpg');
   background-position: center;
   background-size: cover;
+  background-attachment: fixed;
+}
+
+#main .main-content{
+  width: 800px;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 1080px) {
+  #main .main-content{
+    width: auto;
+    margin: 0 20px;
+  }
 }
 
 #footer{

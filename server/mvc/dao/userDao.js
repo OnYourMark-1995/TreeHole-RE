@@ -1,4 +1,4 @@
-const { default_avatar_img } = require("../../config/userConfig");
+const { DEFAULT_AVATAR_IMG } = require("../../config/userConfig");
 const sqlExecuteTool = require("../../utils/sqlExecuteTool");
 
 const userDao = {
@@ -55,7 +55,7 @@ const userDao = {
       VALUES (?, ?, ?, ?);"
 
 		if (!user.avatarImg) {
-			user.avatarImg = default_avatar_img
+			user.avatarImg = DEFAULT_AVATAR_IMG
 		}
 
 		// 插入操作的返回值 result 如下：
@@ -76,11 +76,43 @@ const userDao = {
 	},
 
 	/**
-	 * 更新用户信息
+	 * 更新用户信息（更新头像由另一个函数updateUserAvatarImg()处理）
 	 * @param {Object} user 更新后的用户信息
 	 */
-	updateUser: async (user) => {
+	updateUserInfo: async (user) => {
+		const sql = "UPDATE user_table \
+				SET username = ?, email = ?, gender = ? \
+				WHERE user_id = ?"
+		const results = await sqlExecuteTool.sqlExecute(sql, [
+			user.username, 
+			user.email,
+			user.gender,
+			user.userId
+		])
+		return results
+	},
 
+	/**
+	 * 根据 用户id 查询 用户头像图片文件名
+	 * @param {Number} userId 
+	 */
+	selectUserAvatarImg: async (userId) => {
+		const sql = "SELECT avatar_img as avatarImg \
+			FROM user_table WHERE user_id = ?;"
+		const results = await sqlExecuteTool.sqlExecute(sql, [userId])
+		return results
+	},
+
+	/**
+	 * 根据 用户id 更新 用户头像图片文件名
+	 * @param {Number} userId 用户id
+	 * @param {String} newAvatarImg 新头像图片文件名
+	 */
+	updateUserAvatarImg: async (userId, newAvatarImg) => {
+		const sql = "UPDATE user_table \
+				SET avatar_img = ? WHERE user_id = ? ;"
+		const results = await sqlExecuteTool.sqlExecute(sql, [newAvatarImg, userId])
+		return results
 	},
 
 	/**

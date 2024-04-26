@@ -10,7 +10,7 @@ const props = defineProps(['height'])
   </div>
 </template>
 
-<style scoped>
+<style>
 .logo{
   height: 40px;
   display: flex;
