@@ -2,6 +2,12 @@
 import Header from './layout/header/Header.vue';
 import Footer from './layout/footer/Footer.vue';
 import { RouterView } from 'vue-router';
+import { ref, provide } from 'vue';
+
+import LoginPopup from './components/LoginPopup.vue';
+
+const isLoginPopupShow = ref(true)
+provide("isLoginPopupShow", isLoginPopupShow)
 
 </script>
 
@@ -11,6 +17,8 @@ import { RouterView } from 'vue-router';
     <router-view class="main-content"></router-view>
   </main>
   <Footer id="footer"/>
+
+  <LoginPopup v-model:show="isLoginPopupShow" />
 </template>
   
 <style scoped>

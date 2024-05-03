@@ -1,5 +1,5 @@
 <script setup>
-const model = defineModel();
+const isShowModel = defineModel("show", { required: true });
 const props = defineProps({
   width: String,
   height: String,
@@ -7,14 +7,14 @@ const props = defineProps({
 });
 
 const closePopUp = () => {
-  model.value = false
+  isShowModel.value = false
 }
 
 </script>
 
 <template appear>
   <Transition name="fade">
-    <div v-if="model" class="popup-mask" @click.stop="closePopUp">
+    <div v-if="isShowModel" class="popup-mask" @click.stop="closePopUp">
       <div 
         class="popup-content-wrap"
         :style="{
@@ -41,6 +41,7 @@ const closePopUp = () => {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, .5);
+  z-index: 999;
 }
 
 .popup-content-wrap{

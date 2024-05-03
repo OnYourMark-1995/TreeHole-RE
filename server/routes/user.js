@@ -11,14 +11,14 @@ router.post('/register', async (req, res) => {
     const data = await userService.register({ username, email, password })
     res.json({
       code: 1001,
-      messsage: "注册成功",
+      message: "注册成功",
       data: data
     })
   } catch (error) {
     res.status(400)
     res.json({
       code: 4001,
-      messsage: "注册失败，" + error.message,
+      message: "注册失败，" + error.message,
       data: null
     })
   }
@@ -32,14 +32,14 @@ router.post('/login', async (req, res) => {
     const data = await userService.login({ username, email, password })
     res.json({
       code: 1002,
-      messsage: "登录成功",
+      message: "登录成功",
       data: data
     })
   } catch (error) {
     res.status(400)
     res.json({
       code: 4002,
-      messsage: "登录失败，" + error.message,
+      message: "登录失败，" + error.message,
       data: null
     })
   }

@@ -2,13 +2,20 @@
 const value = defineModel('value')
 
 const props = defineProps({
-  placeholder: String
+  placeholder: String,
+  password: Boolean
 })
 
 </script>
 
 <template>
-  <input v-model="value" type="text" class="my-text-input" :placeholder="placeholder">
+  <input 
+    v-model="value" 
+    :type="password ? 'password' : 'text'" 
+    class="my-text-input" 
+    :placeholder="placeholder"
+    autocomplete="on"
+  >
 </template>
 
 <style>

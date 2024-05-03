@@ -1,16 +1,18 @@
 <script setup>
+import { inject } from 'vue';
+
 const props = defineProps({
   label: String,
-  labelWidth: String
 })
+
+// labelWidth 由 MyForm 组件提供（可选）
+const labelWidth = inject('label-width', { default: '' })
 </script>
 
 <template>
   <div class="my-form-item">
     <div class="my-form-label-wrap"
-      :style="{
-        width: labelWidth
-      }"
+      :style="{ width: labelWidth }"
     >
       <label class="my-form-label">{{ label }} :</label>
     </div>
@@ -18,7 +20,6 @@ const props = defineProps({
     <div class="my-input-wrap">
       <slot></slot>
     </div>
-    
   </div>
 </template>
 

@@ -1,5 +1,13 @@
 <script setup>
-  
+import { provide } from 'vue';
+const props = defineProps({
+  labelWidth: String
+})
+
+// 为  MyFormItem 组件提供 labelWidth
+if( props.labelWidth ){
+  provide("label-width", props.labelWidth)
+}
 </script>
 
 <template>

@@ -1,10 +1,12 @@
+const path = require('path')
+const fs = require('fs/promises')
+const url = require('url')
 const userDao = require("../dao/userDao")
 const userSchemas = require("../../schema/userSchemas")
 const { jwtSign } = require("../../utils/jwtTool")
-const { AVATAR_IMG_FLODER } = require("../../config/avatarImgStorageConfig")
-const path = require('path')
-const fs = require('fs/promises')
+const { AVATAR_IMG_URL_PREFIX } = require("../../config/avatarImgStorageConfig")
 const { DEFAULT_AVATAR_IMG } = require("../../config/userConfig")
+
 
 const userService = {
   /**
@@ -39,12 +41,20 @@ const userService = {
         username: insertResult.username
       })
 
-      return { token }
+      return { 
+        token,
+        userInfo: {
+          userId: insertResult.userId,
+          username: insertResult.username,
+          email: insertResult.email,
+          gender: 'secret',
+          avatarImg: url.resolve(AVATAR_IMG_URL_PREFIX, selectResults[0].avatarImg)
+        }
+      }
 
     } catch (error) {
       throw new Error("数据库操作异常，请稍后重试")
     }
-
   },
 
   /**
@@ -76,7 +86,13 @@ const userService = {
       username: selectResults[0].username
     })
 
-    return { token }
+    return { 
+      token,
+      userInfo: {
+        ...selectResults[0],
+        avatarImg: url.resolve(AVATAR_IMG_URL_PREFIX, selectResults[0].avatarImg)
+      }
+    }
   },
 
   /**
@@ -113,7 +129,7 @@ const userService = {
       return
     }
     try {
-      const fsResult = await fs.rm(path.join(AVATAR_IMG_FLODER, oldAvatarImg))
+      const fsResult = await fs.rm(path.join(AVATAR_IMG_FOLDER, oldAvatarImg))
       console.log(fsResult);
     } catch (error) {
       console.log('头像文件删除异常：', error);

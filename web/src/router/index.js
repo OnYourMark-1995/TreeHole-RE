@@ -1,6 +1,6 @@
 import {createRouter, createWebHashHistory} from 'vue-router';
 
-import Test from '../views/Test.vue';
+import Test from '../views/test/Test.vue';
 import Home from '../views/home/index.vue';
 import User from '../views/user/index.vue';
 import Setting from '../views/setting/index.vue';
