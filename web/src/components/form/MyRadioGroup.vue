@@ -1,14 +1,18 @@
-<!-- 使用案例
+<!-- 
+使用案例 1：
+const options = [
+  { value: '1', label: 'option1' },
+  { value: '2', label: 'option2' },
+  { value: '3', label: 'option3' }
+]
+
 <div style="padding: 20px 20px">
-  <MyRadioGroup :options="[
-    { value: '1', label: 'option1' },
-    { value: '2', label: 'option2' },
-    { value: '3', label: 'option3' }
-  ]"
+  <MyRadioGroup :options="options"
   v-model:value="radioValue"
   ></MyRadioGroup>
 </div>
 
+使用案例 2：
 <div style="padding: 20px 20px">
   <MyRadioGroup v-model:value="radioValue">
     <MyRadio value="man">男</MyRadio>
@@ -26,7 +30,7 @@ const props = defineProps({
   options: Array, 
 })
 
-// 1. 如果传入了 options 则渲染 options 中的选项
+// 1. 如果传入了 options 则根据 options 中的选项渲染 MyRadio组件（使用 v-for 渲染）
 // 2. 如果没有传入 options，则将 radioGroupValue 提供给子组件（在插槽中）中的 
 // MyRadio组件，如果没有给子组件中的 MyRadio 绑定v-model，则子组件会获取父组件
 // 的 radioGroupValue 绑定给 单选框的 input

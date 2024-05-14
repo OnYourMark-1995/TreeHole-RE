@@ -6,7 +6,8 @@ import { ref, provide } from 'vue';
 
 import LoginPopup from './components/LoginPopup.vue';
 
-const isLoginPopupShow = ref(true)
+// 登录弹窗 是否显示
+const isLoginPopupShow = ref(false)
 provide("isLoginPopupShow", isLoginPopupShow)
 
 </script>
@@ -14,7 +15,9 @@ provide("isLoginPopupShow", isLoginPopupShow)
 <template>
   <Header id="header"/>
   <main id="main">
-    <router-view class="main-content"></router-view>
+    <div class="main-content">
+      <router-view></router-view>
+    </div>
   </main>
   <Footer id="footer"/>
 

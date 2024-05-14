@@ -1,4 +1,6 @@
 <script setup>
+import { inject } from 'vue';
+
 const value = defineModel('value')
 
 const props = defineProps({
@@ -6,6 +8,15 @@ const props = defineProps({
   password: Boolean
 })
 
+// 获取 MyFormItem 提供的对象
+const myFormItem = inject('myFormItem', undefined)
+
+/**
+ * 表单失去焦点时 触发的事件
+ */
+const blurHandler = () => {
+  myFormItem.validate()
+}
 </script>
 
 <template>
@@ -15,6 +26,7 @@ const props = defineProps({
     class="my-text-input" 
     :placeholder="placeholder"
     autocomplete="on"
+    @blur="blurHandler"
   >
 </template>
 

@@ -1,12 +1,71 @@
 <script setup>
-import { inject } from 'vue';
+import { computed, inject, onMounted, provide, ref } from 'vue';
 
 const props = defineProps({
   label: String,
+  prop: String
 })
 
+// 获取 MyForm 提供的对象
+const myForm = inject('myForm', undefined)
+
 // labelWidth 由 MyForm 组件提供（可选）
-const labelWidth = inject('label-width', { default: '' })
+const labelWidth = computed(() => {
+  return myForm?.labelWidth
+})
+
+/**
+ * 当前表单项内的表单的值（从 myFrom.model 中获取）
+ */
+const fieldValue = computed(() => {
+  const model = myForm?.model
+  if(!model || !props.prop) {
+    return
+  }
+  return model[props.prop]
+})
+
+// 挂载时将 一些对象 注册到父组件 MyForm
+onMounted(() => {
+  if(!myForm || !props.prop) return
+
+  myForm.addField({
+    validate,
+    prop: props.prop
+  })
+})
+
+/**
+ * 响应式数据，渲染到页面的错误提示
+ */
+const errorMessage = ref('')
+
+/**
+ * 校验当前表单项
+ */
+const validate = () => {
+  errorMessage.value = ''
+
+  if(fieldValue.value === undefined) return 
+  
+  const validator = myForm?.rules?.[props.prop]
+  if(!validator) return
+  
+  try {
+    validator(fieldValue.value)
+  } catch (error) {
+    console.log(error);
+    errorMessage.value = error.message
+  }
+}
+
+provide('myFormItem', {
+  validate,
+})
+
+defineExpose({
+  validate
+})
 </script>
 
 <template>
@@ -19,15 +78,17 @@ const labelWidth = inject('label-width', { default: '' })
 
     <div class="my-input-wrap">
       <slot></slot>
+      <span class="error-message">{{ errorMessage }}</span>
     </div>
+    
   </div>
 </template>
 
 <style scoped>
 .my-form-item{
   width: 100%;
+  margin-bottom: 24px;
   display: flex;
-  margin-bottom: 20px;
 }
 
 .my-form-label-wrap{
@@ -43,5 +104,17 @@ const labelWidth = inject('label-width', { default: '' })
 
 .my-input-wrap{
   flex: 1;
+  position: relative;
 }
+
+.error-message{
+  position: absolute;
+  bottom: -18px;
+  left: 0;
+
+  color: red;
+  font-size: 14px;
+  font-family: var(--font_family);
+}
+
 </style>
