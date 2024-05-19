@@ -32,6 +32,8 @@ create table message_table (
     foreign key (user_id) references user_table(user_id)
 );
 
+alter table message_table modify `date` datetime not null comment "消息的提交时间";
+
 insert into message_table (content, `date`, user_id) values ("hello world 2!", "2024-4-4", 1);
 insert into message_table (content, `date`, user_id) values ("hello world!", "2024-4-4", 2);
 

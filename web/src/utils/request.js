@@ -1,5 +1,6 @@
 import axios from 'axios';
 import axiosConfig from '../config/axios-config';
+import useUserStore from '../store/useUserStore';
 
 const { BASE_URL, TOKEN_HTTP_HEADER } = axiosConfig
 
@@ -10,8 +11,9 @@ const instance = axios.create({
 
 // 添加请求拦截器
 instance.interceptors.request.use(function (config) {
+  const userStore = useUserStore()
   // 在请求头中 添加 jwt（携带jwt的请求头字段保存在axiosConfig文件中）
-  // config.headers[TOKEN_HTTP_HEADER] = 
+  config.headers[TOKEN_HTTP_HEADER] = userStore.token
 
   return config;
 }, function (error) {

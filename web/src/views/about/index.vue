@@ -5,9 +5,9 @@ defineOptions({
 </script>
 
 <template>
-  <div class="about-page-wrap">
+  <!-- <div class="about-page-wrap"> -->
     <h1>about</h1>
-  </div>
+  <!-- </div> -->
 </template>
 
 <style scoped>

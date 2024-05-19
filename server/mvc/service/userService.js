@@ -22,6 +22,7 @@ const userService = {
     try {
 			queryResults = await userDao.selectUserIdByUsernameOrEmail(user.username, user.email)
 		} catch (error) {
+      console.log(error);
 			throw new Error("数据库操作异常，请稍后再试")
 		}
 
@@ -48,11 +49,12 @@ const userService = {
           username: insertResult.username,
           email: insertResult.email,
           gender: 'secret',
-          avatarImg: url.resolve(AVATAR_IMG_URL_PREFIX, selectResults[0].avatarImg)
+          avatarImg: url.resolve(AVATAR_IMG_URL_PREFIX, DEFAULT_AVATAR_IMG)
         }
       }
 
     } catch (error) {
+      console.log(error);
       throw new Error("数据库操作异常，请稍后重试")
     }
   },

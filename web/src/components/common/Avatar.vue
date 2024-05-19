@@ -35,7 +35,7 @@ const props = defineProps({
     'background-color': textMode && textBackgroundColor,
   }">
     <p v-if="textMode" :style="{ 'font-size': textFontSize }">{{ textContent }}</p>
-    <img v-else :src="imgSrc" alt="avator">
+    <img v-else :src="imgSrc" alt="avatar">
   </div>
 </template>
 

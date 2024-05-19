@@ -17,10 +17,10 @@ const userInfo = ref({
 </script>
 
 <template>
-  <div class="user-page-wrap">
+  <!-- <div class="user-page-wrap"> -->
     <UserCard :user="userInfo"/>
     <h1>user</h1>
-  </div>
+  <!-- </div> -->
 </template>
 
 <style scoped>

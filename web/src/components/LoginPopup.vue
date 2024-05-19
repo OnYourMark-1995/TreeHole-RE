@@ -7,23 +7,41 @@ import MyButton from './common/MyButton.vue';
 
 import warnIconImg from '../assets/warnIcon.png';
 
-import { ref } from 'vue';
-import { isEmail, isStringEmpty } from '../utils/argumentValidator';
+import { provide, ref } from 'vue';
 import userApi from '../api/userApi';
-import { useUserStore } from '../store/useUserStore';
+import useUserStore from '../store/useUserStore';
+import userInfoValidator from '../utils/validator/userInfoValidator';
+import { isStringEmpty, isEmail } from '../utils/validator/commonValidator';
 
 const userStore = useUserStore()
 
 const isShowModel = defineModel("show", { required: true })
-
-const warnMessage = ref("")
+provide('isLoginPopupShow', isShowModel)
 
 const formMode = ref('loginMode')
+
+const warnMessage = ref('')
+
+const loginFormRef = ref(null)
+const registerFormRef = ref(null)
 
 const loginForm = ref({
   usernameOrEmail: "",
   password: ""
 })
+
+const loginFormRules = {
+  usernameOrEmail: (value) =>{
+    if(isStringEmpty(value)){
+      throw new Error("您还未输入，请输入用户名 或 电子邮箱！")
+    }
+  },
+  password: (value) => {
+    if(isStringEmpty(value)){
+      throw new Error("您还未输入，请输入密码！")
+    }
+  },
+}
 
 const registerForm = ref({
   username: "",
@@ -31,65 +49,58 @@ const registerForm = ref({
   password: ""
 })
 
-// 现在的参数校验像屎一样，要把参数校验添加到每个 inputItem 组件中
-const loginHandler = async () => {
-  if(isStringEmpty(loginForm.value.usernameOrEmail)){
-    warnMessage.value = "用户名/邮箱 不能为空"
-  } 
-  else if(isStringEmpty(loginForm.value.password)){
-    warnMessage.value = "密码 不能为空"
-  }
-  else{
-    warnMessage.value = ""
+const registerFormRules = {
+  username: userInfoValidator['username'],
+  email: userInfoValidator['email'],
+  password: userInfoValidator['password']
+}
 
-    let res
+const loginHandler = async () => {
+  console.log(loginFormRef);
+  loginFormRef.value.validate(async (valid) => {
+    if(!valid) return 
+    
     try {
+      let result
       if(isEmail(loginForm.value.usernameOrEmail)){
-        res = await userApi.loginByEmail(
+        result = await userApi.loginByEmail(
           loginForm.value.usernameOrEmail, 
           loginForm.value.password
         )
       }
       else {
-        res = await userApi.loginByUsername(
+        result = await userApi.loginByUsername(
           loginForm.value.usernameOrEmail, 
           loginForm.value.password
         )
       }
-      const { data } = res.data
+      const { data } = result.data
       userStore.setLoginInfo(data)
 
       isShowModel.value = false
 
     } catch (axiosError) {
-      const { data } = axiosError.response
-      warnMessage.value = data.message
+      if(axiosError.code === 'ERR_NETWORK'){
+        warnMessage.value = "您的网络连接异常，请稍后再试！"
+      } else {
+        const { data } = axiosError.response
+        warnMessage.value = data.message
+      }
     }
-  } 
+  })
 }
 
 const registerHandler = async () => {
-  if(isStringEmpty(registerForm.value.username)){
-    warnMessage.value = "用户名 不能为空"
-  } 
-  else if(isStringEmpty(registerForm.value.email)){
-    warnMessage.value = "邮箱 不能为空"
-  }
-  else if(!isEmail(registerForm.value.email)){
-    warnMessage.value = "邮箱 格式不正确"
-  }
-  else if(isStringEmpty(registerForm.value.password)){
-    warnMessage.value = "密码 不能为空"
-  }
-  else {
-    warnMessage.value = ""
+  registerFormRef.value.validate(async (valid) => {
+    if(!valid) return
+
     try {
-      const res = await userApi.register(
+      const result = await userApi.register(
         registerForm.value.username, 
         registerForm.value.email, 
         registerForm.value.password
       )
-      const { data } = res.data
+      const { data } = result.data
 
       console.log(data);
       userStore.setLoginInfo(data)
@@ -97,16 +108,20 @@ const registerHandler = async () => {
       isShowModel.value = false
 
     } catch (axiosError) {
-      const { data } = axiosError.response
-      warnMessage.value = data.message
+      if(axiosError.code === 'ERR_NETWORK'){
+        warnMessage.value = "您的网络连接异常，请稍后再试！"
+      } else {
+        const { data } = axiosError.response
+        warnMessage.value = data.message
+      }
     }
-  }
+  })
 }
 
 </script>
 
 <template>
-  <Popup v-model:show="isShowModel" width="500px">
+  <Popup v-model:show="isShowModel" width="530px">
     <div class="tap-wrap">
       <div 
         @click="() => formMode = 'loginMode'" 
@@ -122,7 +137,10 @@ const registerHandler = async () => {
     </div>
 
     <div class="warn-message-wrap">
-      <div v-show="warnMessage.length" class="warn-message">
+      <div
+        class="warn-message"
+        :class="{ 'warn-message-hidden': warnMessage.length == 0}"
+      >
         <img class="warn-icon-img" :src="warnIconImg">
         {{ warnMessage }}
       </div>
@@ -130,11 +148,16 @@ const registerHandler = async () => {
 
     <div class="form-wrap">
       <div v-if="formMode === 'loginMode'" class="login-form">
-        <MyForm label-width="100px">
-          <MyFormItem label="用户名/邮箱">
+        <MyForm 
+          label-width="100px"
+          ref="loginFormRef"
+          :model="loginForm"
+          :rules="loginFormRules"
+        >
+          <MyFormItem label="用户名/邮箱" prop="usernameOrEmail">
             <MyInput v-model="loginForm.usernameOrEmail" placeholder="请输入用户名或邮箱"/>
           </MyFormItem>
-          <MyFormItem label="密码">
+          <MyFormItem label="密码" prop="password">
             <MyInput v-model="loginForm.password" placeholder="请输入密码" password/>
           </MyFormItem>
         </MyForm>
@@ -145,14 +168,19 @@ const registerHandler = async () => {
       </div>
 
       <div v-else-if="formMode === 'registerMode'" class="register-form">
-        <MyForm label-width="100px">
-          <MyFormItem label="用户名">
+        <MyForm 
+          label-width="80px"
+          ref="registerFormRef"
+          :model="registerForm"
+          :rules="registerFormRules"
+        >
+          <MyFormItem label="用户名" prop="username">
             <MyInput v-model="registerForm.username" placeholder="请输入用户名"/>
           </MyFormItem>
-          <MyFormItem label="邮箱">
+          <MyFormItem label="邮箱" prop="email">
             <MyInput v-model="registerForm.email" placeholder="请输入邮箱"/>
           </MyFormItem>
-          <MyFormItem label="密码">
+          <MyFormItem label="密码" prop="password">
             <MyInput v-model="registerForm.password" placeholder="请输入密码" password/>
           </MyFormItem>
         </MyForm>
@@ -170,7 +198,7 @@ const registerHandler = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 16px 0;
+  margin: 36px 0 6px 0;
 }
 
 .tab-item{
@@ -198,7 +226,7 @@ const registerHandler = async () => {
 }
 
 .warn-message-wrap{
-  margin: 10px 0;
+  margin-bottom: 10px;
 }
 
 .warn-icon-img{
@@ -210,12 +238,16 @@ const registerHandler = async () => {
   align-items: center;
 
   margin: 0 15px;
-  padding: 5px 15px;
+  padding: 4px 12px;
   border-radius: 10px;
   background-color: orange;
 
   font-size: 16px;
   line-height: 16px;
   color: #ffffff;
+}
+
+.warn-message-hidden{
+  visibility: hidden;
 }
 </style>

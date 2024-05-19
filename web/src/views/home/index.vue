@@ -1,5 +1,6 @@
 <script setup>
 import MessageCardList from '../../components/MessageCardList.vue';
+import MessageEditor from './MessageEditor.vue';
 import MyButton from '../../components/common/MyButton.vue';
 import defaultAvatar from '../../assets/defaultAvatar.png';
 import { ref } from 'vue';
@@ -55,25 +56,20 @@ const getMoreMessages = () => {
 </script>
 
 <template>
-  <div class="home-page-wrap">
-    <MessageCardList :message-list="messageList"/>
+  <MessageEditor />
 
-    <div class="get-message-button-wrap">
-      <MyButton 
-        @click="getMoreMessages" 
-        width="80%"
-      >点击获取更多</MyButton>
-    </div>
-    
+  <MessageCardList :message-list="messageList"/>
+
+  <div class="get-message-button-wrap">
+    <MyButton 
+      @click="getMoreMessages" 
+      width="80%"
+    >点击获取更多</MyButton>
   </div>
-  
+    
 </template>
 
 <style scoped>
-.home-page-wrap{
-  width: 100%;
-}
-
 .get-message-button-wrap{
   width: 100%;
   display: flex;

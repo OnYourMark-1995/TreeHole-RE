@@ -1,20 +1,45 @@
 <script setup>
 import Avatar from '../../components/common/Avatar.vue';
-import defaultAvatar from '../../assets/defaultAvatar.png';
 
 import Tip from '../../components/common/Tip.vue';
-import { ref } from 'vue';
+import { computed, inject, ref } from 'vue';
+import useUserStore from '../../store/useUserStore';
 
 const isTipContentShow = ref(false)
+const userStore = useUserStore()
+
+const isLogin = computed(() => {
+  return userStore.token != ''
+})
+
+const userInfo = computed(() => {
+  return userStore.userInfo
+})
+
+const avatarImgUrl = computed(() => {
+  return userInfo.value.avatarImg
+})
+
+const isLoginPopupShow = inject('isLoginPopupShow')
 
 // 点击 下拉框中的任意 li标签 都要收起下拉框，而不是只有路由跳转才收起
 
 </script>
 
 <template>
-  <Tip v-model:show="isTipContentShow">
+  <Avatar 
+    v-if="!isLogin" 
+    radius="40px"
+    text-mode
+    text-content="登录"
+    text-font-size="16px"
+    style="cursor: pointer;"
+    @click="() =>  isLoginPopupShow = true"
+  />
+
+  <Tip v-else v-model:show="isTipContentShow">
     <template #reference>
-      <Avatar radius="40px" :imgSrc="defaultAvatar" style="cursor: pointer;" />
+      <Avatar radius="40px" :imgSrc="avatarImgUrl" style="cursor: pointer;" />
     </template>
 
     <template #tip-content>

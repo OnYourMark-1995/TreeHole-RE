@@ -67,6 +67,7 @@ router.post('/update/info', checkTokenMiddleware, async (req, res) => {
       data: null
     })
   } catch (error) {
+    res.status(400)
     res.json({
       code: 4201,
       message: error.message,
@@ -90,6 +91,7 @@ router.post('/update/avatar',
         data: null
       })
     } catch (error) {
+      res.status(400)
       res.json({
         code: 4204,
         message: error.message,

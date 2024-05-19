@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { localGetLoginInfo, localSetLoginInfo } from '../utils/storage'
 
-export const useUserStore = defineStore('user', {
+const useUserStore = defineStore('user', {
   state: () => ({
     loginInfo: localGetLoginInfo()
   }),
@@ -20,3 +20,5 @@ export const useUserStore = defineStore('user', {
     }
   },
 })
+
+export default useUserStore

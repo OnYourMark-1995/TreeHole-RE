@@ -56,6 +56,7 @@ const validate = () => {
   } catch (error) {
     console.log(error);
     errorMessage.value = error.message
+    throw error
   }
 }
 
@@ -87,7 +88,7 @@ defineExpose({
 <style scoped>
 .my-form-item{
   width: 100%;
-  margin-bottom: 24px;
+  margin-bottom: 30px;
   display: flex;
 }
 
@@ -109,7 +110,7 @@ defineExpose({
 
 .error-message{
   position: absolute;
-  bottom: -18px;
+  top: 30px;
   left: 0;
 
   color: red;
