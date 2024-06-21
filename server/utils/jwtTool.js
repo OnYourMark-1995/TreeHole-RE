@@ -7,7 +7,7 @@ const jwtSign = (data) => {
   })
 }
 
-const jwtVarify = (token) => {
+const jwtVerify = (token) => {
   let result
   jwt.verify(token, jwtConfig.secret, (error, decode) => {
     result = {
@@ -18,4 +18,4 @@ const jwtVarify = (token) => {
   return result
 }
 
-module.exports = { jwtSign, jwtVarify }
+module.exports = { jwtSign, jwtVerify }

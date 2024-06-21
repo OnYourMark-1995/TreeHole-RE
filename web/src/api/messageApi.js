@@ -12,5 +12,9 @@ export default {
       date,
       userId
     })
+  },
+
+  getMessage:  (leastMessageId) => {
+    return request.get(`/message/get-message/${leastMessageId}`)
   }
 }

@@ -1,10 +1,11 @@
 <!-- 
 const message = {
+  messageId: 1,
   avatarImg: defaultAvatar,
-  username: 'Asuka haha',
+  username: 'Asuka Hello',
   date: '2024-4-14',
   likeCount: 12,
-  likeId: 12,
+  likeDetailId: 12,
   content: '菜分甲、乙、丙三等。甲菜以土豆、白菜、粉条为主...'
 }
  -->
@@ -41,7 +42,7 @@ const clickLike = () => {
         <div class="message-info-right">
           <!-- 若 likeId 不为 undefined，就渲染为激活态 -->
           <span class="message-like"
-            :class="{ 'message-like-active': message.likeId }"
+            :class="{ 'message-like-active': message.likeDetailId }"
           >
             点赞({{ message.likeCount }})
           </span>

@@ -2,57 +2,63 @@
 import MessageCardList from '../../components/MessageCardList.vue';
 import MessageEditor from './MessageEditor.vue';
 import MyButton from '../../components/common/MyButton.vue';
-import defaultAvatar from '../../assets/defaultAvatar.png';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import messageApi from '../../api/messageApi';
+
+import requestConfig from '../../config/request-config';
 
 defineOptions({
   name: 'Home'
 })
 
-const message = {
-  messageId: 1,
-  avatarImg: defaultAvatar,
-  username: 'Asuka haha',
-  date: '2024-4-14',
-  likeCount: 12,
-  likeId: 12,
-  content: '菜分甲、乙、丙三等。甲菜以土豆、白菜、粉条为主，里面有些叫人嘴馋的大肉片，每份三毛钱；乙菜其他内容和甲菜一样，只是没有肉，每份一毛五分钱；丙菜可就差远了，清水煮白萝卜——似乎只是为了掩饰这过分的清淡，才在里面象征性地漂了几点辣子油花。'
+const messageList = ref([])
+let leastMessageId = -1
+let hasMoreMessage = true
+
+const getMoreMessages = async () => {
+  if(!hasMoreMessage){
+    return window.alert("已获取所有消息，没有更多消息了")
+  } 
+
+  try {
+    const result = await messageApi.getMessage(leastMessageId)
+    const { data } = result.data
+
+    messageList.value.push(...data.messageList)
+
+    leastMessageId = data.messageList.at(-1).messageId
+    hasMoreMessage = data.hasMoreMessage
+
+  } catch (axiosError) {
+
+    console.log(axiosError);
+    if(axiosError.code === 'ERR_NETWORK'){
+      window.alert("您的网络连接异常，请稍后再试！")
+    } else {
+      const { data } = axiosError.response
+      window.alert(data.message)
+    }
+  }
 }
 
-const message1 = {
-  messageId: 2,
-  avatarImg: defaultAvatar,
-  username: 'Asuka haha',
-  date: '2024-4-14',
-  likeCount: 12,
-  content: '只是没有肉，每份一毛五分钱；丙菜可就差远了，清水煮白萝卜——似乎只是为了掩饰这过分的清淡，才在里面象征性地漂了几点辣子油花。'
+const SSEConnect = new EventSource(`${requestConfig.BASE_URL}/message/sse-connect`)
+
+SSEConnect.onopen = (event) => {
+  console.log("Server-Sent Events open", event)
 }
 
-const message2 = {
-  messageId: 3,
-  avatarImg: defaultAvatar,
-  username: 'Asuka haha',
-  date: '2024-4-14',
-  likeCount: 12,
-  content: '只是没有肉，每份一毛五分钱；丙菜可就差远了，清水煮'
+SSEConnect.onmessage = (event) => {
+  console.log("Server-Sent Events message", event.data)
 }
 
-const message3 = {
-  messageId: 4,
-  avatarImg: defaultAvatar,
-  username: 'Asuka haha',
-  date: '2024-4-14',
-  likeCount: 12,
-  content: '只是没有肉，每份一毛五分钱；丙菜可就差远了，清水煮'
+SSEConnect.onerror = (event) => {
+  console.log(event)
+  throw new Error('Server-Sent Events error !')
 }
 
-const messageList = ref([message, message1])
-
-// const messageList = ref([])
-
-const getMoreMessages = () => {
-  messageList.value.push(message2, message3)
-}
+onMounted(() => {
+  getMoreMessages()
+})
 </script>
 
 <template>

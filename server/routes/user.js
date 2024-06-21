@@ -51,7 +51,7 @@ router.post('/loginout', (req, res) => {
 })
 
 // 更新用户信息（更新头像在另一个路由/update/avatar中处理）
-router.post('/update/info', checkTokenMiddleware, async (req, res) => {
+router.post('/update/info', checkTokenMiddleware(true), async (req, res) => {
   const { username, email, gender } = req.body
   try {
     await userService.updateInfo({ 
@@ -78,7 +78,7 @@ router.post('/update/info', checkTokenMiddleware, async (req, res) => {
 
 const avatarImgUploadMiddleware = require('../middlewares/avatarImgUploadMiddleware');
 router.post('/update/avatar', 
-  checkTokenMiddleware,
+  checkTokenMiddleware(true),
   avatarImgUploadMiddleware, 
   async (req, res) => {
     try {

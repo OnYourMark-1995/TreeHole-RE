@@ -1,21 +1,35 @@
 const sqlExecuteTool = require('../../utils/sqlExecuteTool')
 
 const messageDao = {
+
   /**
-   * 获取 size条 信息
-   * @param {Number} size 获取的消息数
-   * @param {Number} userId 用户id
+   * 获取 最新的 10 条消息
+   * @param {Number} userId 
    * @returns 
    */
-  selectMessageByPage: async (size, userId) => {
-
-    // 错误的sql，没有分页
-    const sql = "select mt.message_id, mt.content, like_detail_id \
-      from message_table mt \
-      left join user_table ut on mt.user_id = ut.user_id \
-      left join like_detail_table ldt on ldt.user_id= ? and mt.message_id = ldt.message_id;"
+  getFirstTenMessage: async (userId = null) => {
+    const sql = "SELECT mt.message_id messageId, mt.content, mt.`date`, mt.like_count likeCount, ut.avatar_img avatarImg, ut.username, ldt.like_detail_id likeDetailId \
+    FROM (SELECT * FROM message_table ORDER BY message_id DESC LIMIT 10) mt \
+    LEFT JOIN user_table ut ON mt.user_id = ut.user_id \
+    LEFT JOIN like_detail_table ldt ON ldt.user_id = ? AND mt.message_id = ldt.message_id ;"
 
     const results = await sqlExecuteTool.sqlExecute(sql, [userId])
+    return results
+  },
+
+  /**
+   * 获取message_id 小于 leastMessageId 的10条消息，并联表查询出消息发送者，还有用户id为userId的用户对这10条数据的点赞情况
+   * @param {Number} leastMessageId 用户已收到的消息中，id最小的消息的id号
+   * @param {Number} userId 用户id，默认值为null，即用户没有登陆时，不会传递用户id
+   * @returns 
+   */
+  getMessageByLeastId: async (leastMessageId, userId = null) => {
+    const sql = "SELECT mt.message_id messageId, mt.content, mt.`date`, mt.like_count likeCount, ut.avatar_img avatarImg, ut.username, ldt.like_detail_id likeDetailId \
+    FROM (SELECT * FROM message_table WHERE message_id < ? ORDER BY message_id DESC LIMIT 10) mt \
+    LEFT JOIN user_table ut on mt.user_id = ut.user_id \
+    LEFT JOIN like_detail_table ldt ON ldt.user_id = ? AND mt.message_id = ldt.message_id ;"
+
+    const results = await sqlExecuteTool.sqlExecute(sql, [leastMessageId, userId])
     return results
   },
 
