@@ -12,7 +12,7 @@ const closePopUp = () => {
 
 </script>
 
-<template appear>
+<template>
   <Transition name="fade">
     <div v-if="isShowModel" class="popup-mask" @click.stop="closePopUp">
       <div 
@@ -36,7 +36,7 @@ const closePopUp = () => {
   
 </template>
 
-<style>
+<style scoped>
 .popup-mask{
   position: fixed;
   inset: 0;

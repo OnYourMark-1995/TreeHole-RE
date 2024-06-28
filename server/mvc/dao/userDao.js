@@ -10,7 +10,7 @@ const userDao = {
 	 * @returns 
 	 */
 	selectUserByUsernameAndPassword: async (username, password) => {
-		const sql = "SELECT user_id as userId, username, email, gender, avatar_img as avatarImg \
+		const sql = "SELECT user_id AS userId, username, email, gender, avatar_img AS avatarImg \
 			FROM user_table \
       WHERE username = ? AND password = ? ;"
 
@@ -25,7 +25,7 @@ const userDao = {
 	 * @returns 
 	 */
 	 selectUserByEmailAndPassword: async (email, password) => {
-		const sql = "SELECT user_id as userId, username, email, gender, avatar_img as avatarImg \
+		const sql = "SELECT user_id AS userId, username, email, gender, avatar_img AS avatarImg \
 			FROM user_table \
       WHERE email = ? AND password = ? ;"
 
@@ -40,7 +40,7 @@ const userDao = {
 	 * @returns 
 	 */
   selectUserIdByUsernameOrEmail: async (username, email) => {
-		const sql = "SELECT user_id as userId, username, email FROM user_table \
+		const sql = "SELECT user_id AS userId, username, email FROM user_table \
       WHERE username = ? OR email = ? ;"
 
 		const results = await sqlExecuteTool.sqlExecute(sql, [username, email])
@@ -99,7 +99,7 @@ const userDao = {
 	 * @param {Number} userId 
 	 */
 	selectUserAvatarImg: async (userId) => {
-		const sql = "SELECT avatar_img as avatarImg \
+		const sql = "SELECT avatar_img AS avatarImg \
 			FROM user_table WHERE user_id = ?;"
 		const results = await sqlExecuteTool.sqlExecute(sql, [userId])
 		return results

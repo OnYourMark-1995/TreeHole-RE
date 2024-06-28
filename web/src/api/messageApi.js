@@ -14,7 +14,15 @@ export default {
     })
   },
 
-  getMessage:  (leastMessageId) => {
+  getMessage: (leastMessageId) => {
     return request.get(`/message/get-message/${leastMessageId}`)
+  },
+
+  getUserSendedMessage: (leastMessageId) => {
+    return request.post('/message/get-message/user/sended', { leastMessageId })
+  },
+
+  getUserLikedMessage: (leastLikeDetailId) => {
+    return request.post('/message/get-message/user/liked', { leastLikeDetailId })
   }
 }

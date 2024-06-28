@@ -1,17 +1,23 @@
 <script setup>
 import MessageCardList from '../../components/MessageCardList.vue';
 import MessageEditor from './MessageEditor.vue';
-import MyButton from '../../components/common/MyButton.vue';
-import { onMounted, ref } from 'vue';
+import MessageGettingButton from '../../components/MessageGettingButton.vue';
+
+import { inject, onMounted, ref } from 'vue';
 import messageApi from '../../api/messageApi';
 
 import requestConfig from '../../config/request-config';
+import SSETool from '../../utils/SSETool';
+
+import useMessageList from '../../hook/useMessageList';
 
 defineOptions({
   name: 'Home'
 })
 
-const messageList = ref([])
+const NotifyEl = inject('NotifyEl')
+
+/* const messageList = ref([])
 let leastMessageId = -1
 let hasMoreMessage = true
 
@@ -30,7 +36,6 @@ const getMoreMessages = async () => {
     hasMoreMessage = data.hasMoreMessage
 
   } catch (axiosError) {
-
     console.log(axiosError);
     if(axiosError.code === 'ERR_NETWORK'){
       window.alert("您的网络连接异常，请稍后再试！")
@@ -39,25 +44,26 @@ const getMoreMessages = async () => {
       window.alert(data.message)
     }
   }
-}
+} */
 
-const SSEConnect = new EventSource(`${requestConfig.BASE_URL}/message/sse-connect`)
+const { messageList, getMoreMessages } = useMessageList('messageId', messageApi.getMessage)
 
-SSEConnect.onopen = (event) => {
-  console.log("Server-Sent Events open", event)
-}
+onMounted(async () => {
+  await getMoreMessages()
 
-SSEConnect.onmessage = (event) => {
-  console.log("Server-Sent Events message", event.data)
-}
+  // 建立 Server-Sent Events 连接
+  const SSEConnect = new SSETool(`${requestConfig.BASE_URL}/message/sse-connect`)
 
-SSEConnect.onerror = (event) => {
-  console.log(event)
-  throw new Error('Server-Sent Events error !')
-}
+  SSEConnect.onJsonMessage((result) => {
+    console.log("get message", result);
+    if(result.code == 2004){
+      messageList.value.unshift(result.data)
+    }
+  })
 
-onMounted(() => {
-  getMoreMessages()
+  SSEConnect.onError(() => {
+    NotifyEl.value.error('网络连接状态异常')
+  })
 })
 </script>
 
@@ -66,20 +72,6 @@ onMounted(() => {
 
   <MessageCardList :message-list="messageList"/>
 
-  <div class="get-message-button-wrap">
-    <MyButton 
-      @click="getMoreMessages" 
-      width="80%"
-    >点击获取更多</MyButton>
-  </div>
-    
+  <MessageGettingButton @click="getMoreMessages"/>
+  
 </template>
-
-<style scoped>
-.get-message-button-wrap{
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 40px;
-}
-</style>

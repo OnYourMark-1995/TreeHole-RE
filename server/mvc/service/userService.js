@@ -42,15 +42,17 @@ const userService = {
         username: insertResult.username
       })
 
+      const userInfo = {
+        userId: insertResult.userId,
+        username: insertResult.username,
+        email: insertResult.email,
+        gender: 'secret',
+        avatarImg: url.resolve(AVATAR_IMG_URL_PREFIX, DEFAULT_AVATAR_IMG)
+      }
+
       return { 
         token,
-        userInfo: {
-          userId: insertResult.userId,
-          username: insertResult.username,
-          email: insertResult.email,
-          gender: 'secret',
-          avatarImg: url.resolve(AVATAR_IMG_URL_PREFIX, DEFAULT_AVATAR_IMG)
-        }
+        userInfo
       }
 
     } catch (error) {
@@ -88,12 +90,14 @@ const userService = {
       username: selectResults[0].username
     })
 
+    const userInfo = {
+      ...selectResults[0],
+      avatarImg: url.resolve(AVATAR_IMG_URL_PREFIX, selectResults[0].avatarImg)
+    }
+
     return { 
       token,
-      userInfo: {
-        ...selectResults[0],
-        avatarImg: url.resolve(AVATAR_IMG_URL_PREFIX, selectResults[0].avatarImg)
-      }
+      userInfo
     }
   },
 

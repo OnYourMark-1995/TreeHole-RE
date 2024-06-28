@@ -1,8 +1,10 @@
 <script setup>
+import { useRouter } from 'vue-router';
 import Logo from '../../components/Logo.vue'
 import MyButton from '../../components/common/MyButton.vue';
 import UserAvatar from './UserAvatar.vue';
 
+const router = useRouter()
 </script>
 
 <template>
@@ -13,7 +15,7 @@ import UserAvatar from './UserAvatar.vue';
     
     <div class="right-content">
       <UserAvatar />
-      <MyButton>退出登录</MyButton>
+      <MyButton @click="() => router.replace('/about')">关于</MyButton>
     </div>
   </header>
 </template>

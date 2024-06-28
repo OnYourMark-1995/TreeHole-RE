@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import Avatar from '../../components/common/Avatar.vue';
@@ -8,13 +7,21 @@ import Menu from '../../components/menu/Menu.vue';
 import MenuItem from '../../components/menu/MenuItem.vue'
 
 const props = defineProps({
-  user: {
+  userInfo: {
     type: Object,
     required: true
+  },
+})
+
+const menuModel = defineModel('menu', {
+  // 用户信息卡片下方的菜单的选项，默认选中值为“sended-message”，
+  // 可选值为“sended-message”（用户发送的消息）、“liked-message”（用户点赞的消息）
+  validator(value) {
+    return ['sended-message', 'liked-message'].includes(value)
   }
 })
 
-const menuModel = ref('sended-message')
+const emits = defineEmits(['menuModelChange'])
 
 const router = useRouter()
 </script>
@@ -23,14 +30,14 @@ const router = useRouter()
   <div class="user-card-wrap">
     <div class="user-info-part">
       <div class="user-info-avatar-wrap">
-        <Avatar :img-src="user.avatarImg" radius="65px" border-color="var(--theme_light_color)"/>
+        <Avatar :img-src="userInfo.avatarImg" radius="65px" border-color="var(--theme_light_color)"/>
       </div>
 
       <div class="user-info-main-wrap">
 
         <div class="user-info-main-left">
-          <span class="user-username">{{ user.username }}</span>
-          <span class="user-like-count">获赞数：{{ user.likeCount }}</span>
+          <span class="user-username">{{ userInfo.username }}</span>
+          <span class="user-like-count">获赞数：{{ userInfo.likeCount }}</span>
         </div>
 
         <div class="user-info-main-right">
@@ -41,8 +48,8 @@ const router = useRouter()
     
     <div class="user-choose-menu-part">
       <Menu v-model:current-index="menuModel">
-        <MenuItem index="sended-message" @click="() => console.log('sended')">你发送的</MenuItem>
-        <MenuItem index="liked-message" @click="() => console.log('liked')">你点了赞</MenuItem>
+        <MenuItem index="sended-message" @click="$emit('menuModelChange', 'sended-message')">你发送的</MenuItem>
+        <MenuItem index="liked-message" @click="$emit('menuModelChange', 'liked-message')">你点了赞</MenuItem>
       </Menu>
     </div>
   </div>
@@ -58,6 +65,7 @@ const router = useRouter()
 
   box-sizing: border-box;
   padding: 10px 15px;
+  margin: 24px 0;
 }
 
 .user-info-part{
@@ -82,11 +90,24 @@ const router = useRouter()
   align-items: center;
 }
 
+/* 用户信息左侧，内容为：用户名、获赞数 */
 .user-info-main-left{
   display: flex;
   flex-direction: column;
 }
 
+.user-info-main-left .user-username{
+  font-size: 20px;
+}
+
+.user-info-main-left .user-like-count{
+  display: inline-block;
+  margin-top: 4px;
+
+  font-size: 16px;  
+}
+
+/* 下方的功能选择栏，有两个按钮：你发送的、你点了赞 */
 .user-choose-menu-part{
   padding-top: 8px;
 }

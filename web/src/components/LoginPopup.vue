@@ -16,7 +16,6 @@ import { isStringEmpty, isEmail } from '../utils/validator/commonValidator';
 const userStore = useUserStore()
 
 const isShowModel = defineModel("show", { required: true })
-provide('isLoginPopupShow', isShowModel)
 
 const formMode = ref('loginMode')
 
@@ -77,7 +76,7 @@ const loginHandler = async () => {
       const { data } = result.data
       userStore.setLoginInfo(data)
 
-      isShowModel.value = false
+      closePopup()
 
     } catch (axiosError) {
       if(axiosError.code === 'ERR_NETWORK'){
@@ -105,7 +104,7 @@ const registerHandler = async () => {
       console.log(data);
       userStore.setLoginInfo(data)
 
-      isShowModel.value = false
+      closePopup()
 
     } catch (axiosError) {
       if(axiosError.code === 'ERR_NETWORK'){
@@ -117,6 +116,24 @@ const registerHandler = async () => {
     }
   })
 }
+
+const openPopup = () => {
+  isShowModel.value = true
+}
+
+const closePopup = () => {
+  isShowModel.value = false
+}
+
+provide('LoginPopupEl', {
+  open: openPopup,
+  close: closePopup
+})
+
+defineExpose({
+  open: openPopup,
+  close: closePopup
+})
 
 </script>
 
@@ -162,7 +179,7 @@ const registerHandler = async () => {
           </MyFormItem>
         </MyForm>
         <div class="form-button-group">
-          <MyButton plain-style width="100px" @click="() => isShowModel = false">取消</MyButton>
+          <MyButton plain-style width="100px" @click="closePopup">取消</MyButton>
           <MyButton @click="loginHandler" width="100px">登录</MyButton>
         </div>
       </div>
@@ -185,7 +202,7 @@ const registerHandler = async () => {
           </MyFormItem>
         </MyForm>
         <div class="form-button-group">
-          <MyButton plain-style width="100px" @click="() => isShowModel = false">取消</MyButton>
+          <MyButton plain-style width="100px" @click="closePopup">取消</MyButton>
           <MyButton @click="registerHandler" width="100px">注册</MyButton>
         </div>
       </div>

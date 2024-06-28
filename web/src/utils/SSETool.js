@@ -1,29 +1,24 @@
-class SSETool {
+export default class SSETool {
   constructor(url) {
     this.source = new EventSource(url)
-    this.init()
-  }
-
-  init() {
-    this.on('open', (event) => {
+    this.source.onopen = (event) => {
       console.log("Server-Sent Events open")
-    })
-
-    this.on('error', (event) => {
-      console.log("Server-Sent Events error")
+    }
+    this.source.onerror = (event) => {
       throw new Error("Server-Sent Events error")
-    })
+    }
+  }
+ 
+  onJsonMessage(callback) {
+    this.source.onmessage = (event) => {
+      let data = JSON.parse(event.data)
+      callback(data)
+    }
   }
 
-  on (eventName, callback) {
-    if(eventName == 'open'){
-      this.source.onopen = callback
-    }
-    else if(eventName == 'message'){
-      this.source.onmessage = callback
-    }
-    else if(eventName == 'error'){
-      this.source.onerror = callback
+  onError(callback) {
+    this.source.onerror = (event) => {
+      callback()
     }
   }
 }

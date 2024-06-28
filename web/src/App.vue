@@ -5,11 +5,15 @@ import { RouterView } from 'vue-router';
 import { ref, provide } from 'vue';
 
 import LoginPopup from './components/LoginPopup.vue';
+import Notify from './components/notify/Notify.vue';
 
 // 登录弹窗 是否显示
 const isLoginPopupShow = ref(false)
-provide("isLoginPopupShow", isLoginPopupShow)
+const LoginPopupEl = ref(null)
+provide("LoginPopupEl", LoginPopupEl)
 
+const NotifyEl = ref(null)
+provide('NotifyEl', NotifyEl)
 </script>
 
 <template>
@@ -21,7 +25,9 @@ provide("isLoginPopupShow", isLoginPopupShow)
   </main>
   <Footer id="footer"/>
 
-  <LoginPopup v-model:show="isLoginPopupShow" />
+  <LoginPopup ref="LoginPopupEl" v-model:show="isLoginPopupShow" />
+  <Notify ref="NotifyEl"/>
+  
 </template>
   
 <style scoped>

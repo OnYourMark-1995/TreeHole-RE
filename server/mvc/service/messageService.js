@@ -1,106 +1,162 @@
 const url = require('url')
+const moment = require('moment')
 const { AVATAR_IMG_URL_PREFIX } = require("../../config/avatarImgStorageConfig")
 const messageSchemas = require("../../schema/messageSchemas")
 const messageDao = require("../dao/messageDao")
+const SSETool = require('../../utils/SSETool')
+const { createResponseResult } = require('../../utils/responseTool')
 
-// 模拟缓存功能的工具类
-// const recentUpdateDataList = require('utils/RecentUpdateList')
+/**
+ * 向所有 SSE 连接 发送一条消息
+ * @param {*} messageId 待发送的消息的 id
+ */
+async function sendOneMessageToAllSSEConnection(messageId) {
+  const result = await messageDao.getOneMessage(messageId)
+  messageFormat(result)
+
+  const responseResult = createResponseResult(
+    2004, "收到一位用户发送的一条新消息", result
+  )
+  SSETool.sendJsonToAllConnections(responseResult)
+}
+
+/**
+ * 格式化 消息 
+ * @param {*} message 待格式化的消息
+ */
+function messageFormat(message) {
+  // 将从数据库获取的 消息发送者的头像的文件名 和 url前缀 合并形成 完整的图片url路径
+  message.avatarImg = url.resolve(AVATAR_IMG_URL_PREFIX, message.avatarImg)
+  // 格式化 数据库的时间数据
+  message.date = moment(message.date).format("YYYY-MM-DD HH:mm")
+} 
 
 const messageService = {
-
   /**
-   * 建立 sse 连接
-   * @param {Response} res http响应对象
+   * 客户端 与 服务器建立 Server-Sent Events 连接。
+   * @param {*} res Express框架的 response 响应对象
    */
-  // sseConnect: ( res ) => {
-  //   res.set({
-  //     'Content-Type':'text/event-stream',
-  //     "Cache-Control": "no-cache",
-  //     "Connection": "keep-alive",
-  //     "Access-Control-Allow-Origin": '*'
-  //   })
-  
-  //   res.write(`data:{"code": "1002", "message": "connect success"}\n\n`)
-  
-  //   let lastUpdateTime = Date.now()
-  
-  //   let $timer = setInterval(() => {
-  //     console.log('time in')
-  //     if(lastUpdateTime < recentUpdateDataList.lastReceiveTime){
-  //       return
-  //     }
-  
-  //     const resJson = {
-  //       code: '1003',
-  //       data: recentUpdateDataList.getUpdate(lastUpdateTime)
-  //     }
-  //     console.log('send to Broser')
-  //     lastUpdateTime = Date.now()
-  //     res.write( `data: ${JSON.stringify(resJson)}\n\n` )
-  //   }, 2 * 1000);
-   
-   
-  //   res.on('close', () => {
-  //     clearInterval( $timer )
-  //   })
-  // },
-
   sseConnect: ( res ) => {
-    res.set({
-      'Content-Type':'text/event-stream',
-      "Cache-Control": "no-cache",
-      "Connection": "keep-alive",
-      "Access-Control-Allow-Origin": '*'
-    })
-  
-    res.write(`data:{"code": "1002", "message": "connect success"}\n\n`)
-    
-    res.on('close', () => {
-      console.log("a sse connection closed !");
+    // TODO: 此处不涉及数据的处理，只是建立连接而已，考虑是否移到controller层，而不是在service层
+    SSETool.addConnection(res)
+
+    SSETool.sendJsonToConnection(res, {
+      code: 2003,
+      message: "connect success",
+      data: null
     })
   },
 
-  getMessage: async (leastMessageId, userId = null) => {
+  /**
+   *  获取 10条 消息
+   * @param {Number} leastMessageId 用户已获取的所有消息中 messageId 最小的消息的 messageId。小于等于 0 时返回最新的 10条 数据
+   * @param {Number} userId 用户id
+   * @returns 
+   */
+  getMessage: async (leastMessageId, userId) => {
     let messageList = [] // 保存 数据库中查询到的消息数据
     let hasMoreMessage = true // 是否还有更多的数据
 
     try {
-      // leastMessageId 为 -1 时，返回最新的 10条 数据；大于 0 时，根据 leastMessageId 返回数据
-      if(leastMessageId == -1) {
-        messageList = await messageDao.getFirstTenMessage(userId)
-      } 
-      else if( leastMessageId >= 0){
-        messageList = await messageDao.getMessageByLeastId(leastMessageId, userId)
-      }
-
-      // 查询到的消息不满 10 条，说明后面没有更多的数据了，用户已经获取了所有的消息
-      if(messageList.length < 10) {
-        hasMoreMessage = false
-      }
-      messageList.forEach((message) => {
-        message.avatarImg = url.resolve(AVATAR_IMG_URL_PREFIX, message.avatarImg)
-      })
-
-      return {
-        messageList,
-        hasMoreMessage
+      // leastMessageId 小于等于 0 时，返回最新的 10条 数据；大于 0 时，根据 leastMessageId 返回数据
+      if(leastMessageId <= 0) {
+        messageList = await messageDao.getMessageByLeastMessageId(null, userId)
+      } else {
+        messageList = await messageDao.getMessageByLeastMessageId(leastMessageId, userId)
       }
     } catch (error) {
       console.log(error);
       throw new Error("数据库操作异常，请稍后再试")
     }
+
+    // 查询到的消息不满 10 条，说明后面没有更多的数据了，用户已经获取了所有的消息
+    if(messageList.length < 10) {
+      hasMoreMessage = false
+    }
+    messageList.forEach(message => messageFormat(message))
+
+    return { messageList, hasMoreMessage }
+  },
+
+  /**
+   * 获取 某个用户 发送过的消息
+   * @param {Number} userId 用户id
+   * @param {Number} leastMessageId 用户已获取的所有消息中 messageId 最小的消息的 messageId。小于等于 0 时返回最新的 10条 数据
+   * @returns 
+   */
+  getMessageByUser: async (userId, leastMessageId) => {
+    let hasMoreMessage = true
+    let messageList
+
+    try {
+      // leastMessageId 小于等于 0 时，返回最新的 10条 数据；大于 0 时，根据 leastMessageId 返回数据
+      if(leastMessageId <= 0){
+        messageList = await messageDao.getMessageByUserId(userId)
+      } else {
+        messageList = await messageDao.getMessageByUserId(userId, leastMessageId)
+      }
+    } catch (error) {
+      console.log(error);
+      throw new Error("数据库操作异常，请稍后再试")
+    }
+
+    messageList.forEach(message => messageFormat(message))
+    // 查询到的消息不满 10 条，说明后面没有更多的数据了，用户已经获取了所有的消息
+    if(messageList.length < 10) {
+      hasMoreMessage = false
+    }
+
+    return { hasMoreMessage, messageList }
+  },
+
+  /**
+   * 获取 某个用户 点过赞的消息
+   * @param {Number} userId 用户id
+   * @param {Number} leastLikedId 用户已获取的点过赞的消息中 messageId 最小的消息的 messageId。小于等于 0 时返回最新的 10条 数据
+   * @returns 
+   */
+  getUserLikedMessage: async (userId, leastLikeDetailId) => {
+    let hasMoreMessage = true
+    let messageList
+    
+    try {
+      // leastLikedId 小于等于 0 时，返回最新的 10条 数据；大于 0 时，根据 leastLikedId 返回数据
+      if(leastLikeDetailId <= 0){
+        messageList = await messageDao.getLikedMessageByUserId(userId)
+      } else {
+        messageList = await messageDao.getLikedMessageByUserId(userId, leastLikeDetailId)
+      }
+    } catch (error) {
+      console.log(error);
+      throw new Error("数据库操作异常，请稍后再试")
+    }
+
+    messageList.forEach(message => messageFormat(message))
+    // 查询到的消息不满 10 条，说明后面没有更多的数据了，用户已经获取了所有的消息
+    if(messageList.length < 10) {
+      hasMoreMessage = false
+    }
+
+    return { hasMoreMessage, messageList }
   },
 
   /**
    * 添加一条新的消息
    * @param {Object} message 待插入的新消息
    */
-  add: async ( message ) => {
+  addMessage: async ( message ) => {
     const { value, error } = messageSchemas.add.validate(message)
     if(error) throw Error('参数校验不通过')
 
     try {
-      await messageDao.insertMessage(message.content, message.date, message.userId)
+      const result = await messageDao.insertMessage(message.content, message.date, message.userId)
+      
+      // 发送新消息给所有已连接的用户，使用异步操作，防止发送新消息的逻辑 拖慢 插入新消息请求的响应
+      setTimeout(async () => {
+        await sendOneMessageToAllSSEConnection(result.insertId)
+        console.log("send new message to all user OK!");
+      }, 0)
+
       return {}
     } catch (error) {
       console.log(error);

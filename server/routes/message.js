@@ -4,6 +4,7 @@ const router = express.Router();
 const messageService = require('../mvc/service/messageService');
 const checkTokenMiddleware = require('../middlewares/checkTokenMiddleware');
 const moment = require('moment');
+const { responseTool } = require('../utils/responseTool');
 
 // 建立 sse 连接
 router.get('/sse-connect', function(req, res) {
@@ -15,23 +16,16 @@ router.post('/add', checkTokenMiddleware(true), async (req, res) => {
   const { content, date } = req.body
   const userId = req.userJwt.userId
   try {
-    await messageService.add({ 
+    await messageService.addMessage({ 
       content, 
       date: moment(date).format("YYYY-MM-DD HH:mm:ss"), 
       userId 
     })
-    res.json({
-      code: 2001,
-      message: '消息发送成功',
-      data: null
-    })
+    
+    console.log("add message OK");
+    responseTool.success(res, [2001, '消息发送成功', null])
   } catch (error) {
-    res.status(400)
-    res.json({
-      code: 4101,
-      message: error.message,
-      data: null
-    })
+    responseTool.fail(res, [4101, error.message, null])
   }
 })
 
@@ -47,18 +41,36 @@ router.get('/get-message/:leastMessageId', checkTokenMiddleware(false), async (r
     } else {
       data = await messageService.getMessage(leastMessageId, req.userJwt.userId)
     }
-    res.json({
-      code: 200,
-      message: "获取数据成功",
-      data: data
-    })
+
+    responseTool.success(res, [2002, "获取数据成功", data])
   } catch (error) {
-    res.status(400)
-    res.json({
-      code: 4102,
-      message: error.message,
-      data: null
-    })
+    responseTool.fail(res, [4102, error.message])
+  }
+})
+
+// 用户获取自己发送过的消息数据。
+// 考虑是否改为get请求，类似 router.get('/get-message/:leastMessageId' 的接口
+router.post('/get-message/user/sended', checkTokenMiddleware(true), async (req, res) => {
+  const { leastMessageId } = req.body
+  const { userId } = req.userJwt
+
+  try {
+    const data = await messageService.getMessageByUser(userId, leastMessageId)
+    responseTool.success(res, [2005, "获取用户发送的消息数据，成功", data])
+  } catch (error) {
+    responseTool.fail(res, [4103, error.message])
+  }
+})
+
+router.post('/get-message/user/liked', checkTokenMiddleware(true), async (req, res) => {
+  const { leastLikeDetailId } = req.body
+  const { userId } = req.userJwt
+
+  try {
+    const data = await messageService.getUserLikedMessage(userId, leastLikeDetailId)
+    responseTool.success(res, [2006, "获取用户点过赞的消息数据，成功", data])
+  } catch (error) {
+    responseTool.fail(res, [4104, error.message])
   }
 })
 

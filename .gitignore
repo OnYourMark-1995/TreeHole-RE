@@ -18,6 +18,7 @@ test
 avatarImg-*
 Test.vue
 Test*.vue
+*_deprecated.*
 
 # Editor directories and files
 .vscode/*

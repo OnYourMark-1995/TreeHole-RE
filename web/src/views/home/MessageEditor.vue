@@ -17,16 +17,17 @@ const userInfo = computed(() => {
   return userStore.userInfo
 })
 
-const isLoginPopupShow = inject('isLoginPopupShow')
+const LoginPopupEl = inject('LoginPopupEl')
+const NotifyEl = inject('NotifyEl')
 
 const cancelHandler = () => {
   messageContent.value = ''
 }
 
 const submitHandler = async () => {
-  console.log(messageContent.value);
-  if(!isLogin){
-    isLoginPopupShow.value = true
+  if(!isLogin.value){
+    NotifyEl.value.warning('您没有登录，请先登录或注册。')
+    LoginPopupEl.value.open()
     return
   }
 

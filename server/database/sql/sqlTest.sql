@@ -27,3 +27,21 @@ select mt.message_id, mt.content, mt.`date`, mt.like_count, ut.avatar_img, ut.us
 from (select * from message_table order by message_id desc limit 10) mt 
 left join user_table ut on mt.user_id = ut.user_id 
 left join like_detail_table ldt on ldt.user_id = 1 and mt.message_id = ldt.message_id; 
+
+-- 按消息id 获取一条消息数据
+SELECT mt.message_id messageId, mt.content, mt.`date`, mt.like_count likeCount, ut.avatar_img avatarImg, ut.username, ldt.like_detail_id likeDetailId 
+FROM (select * from message_table where message_id = 18) mt 
+LEFT JOIN user_table ut ON mt.user_id = ut.user_id 
+LEFT JOIN like_detail_table ldt ON ldt.user_id = 1 AND mt.message_id = ldt.message_id ;
+
+-- 根据 用户id 获取用户发送的消息
+SELECT mt.message_id messageId, mt.content, mt.`date`, mt.like_count likeCount, ut.avatar_img avatarImg, ut.username, ldt.like_detail_id likeDetailId 
+FROM (SELECT * FROM message_table WHERE message_id < 27 AND user_id = 1 ORDER BY message_id DESC LIMIT 10) mt
+LEFT JOIN user_table ut ON mt.user_id = ut.user_id 
+LEFT JOIN like_detail_table ldt ON ldt.user_id = 1 AND mt.message_id = ldt.message_id ;
+
+-- 根据 用户id 获取 用户点过赞的消息
+SELECT mt.message_id messageId, mt.content, mt.`date`, mt.like_count likeCount, ut.avatar_img avatarImg, ut.username, ldt.like_detail_id likeDetailId
+FROM ( SELECT * FROM like_detail_table WHERE user_id = 1 AND like_detail_id < 3 ORDER BY like_detail_id DESC LIMIT 10 ) ldt
+LEFT JOIN message_table mt ON mt.message_id = ldt.message_id
+LEFT JOIN user_table ut ON ut.user_id = ldt.user_id ;

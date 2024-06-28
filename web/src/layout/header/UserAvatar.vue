@@ -20,7 +20,7 @@ const avatarImgUrl = computed(() => {
   return userInfo.value.avatarImg
 })
 
-const isLoginPopupShow = inject('isLoginPopupShow')
+const LoginPopupEl = inject('LoginPopupEl')
 
 // 点击 下拉框中的任意 li标签 都要收起下拉框，而不是只有路由跳转才收起
 
@@ -34,7 +34,7 @@ const isLoginPopupShow = inject('isLoginPopupShow')
     text-content="登录"
     text-font-size="16px"
     style="cursor: pointer;"
-    @click="() =>  isLoginPopupShow = true"
+    @click="() => LoginPopupEl.open()"
   />
 
   <Tip v-else v-model:show="isTipContentShow">
