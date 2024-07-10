@@ -17,6 +17,11 @@ const useUserStore = defineStore('user', {
     setLoginInfo(loginInfo) {
       localSetLoginInfo(loginInfo)
       this.loginInfo = loginInfo
+    },
+    updateUserInfo(updatedUserInfo) {
+      Object.assign(this.loginInfo.userInfo, updatedUserInfo)
+      console.log(this.loginInfo);
+      localSetLoginInfo(this.loginInfo)
     }
   },
 })

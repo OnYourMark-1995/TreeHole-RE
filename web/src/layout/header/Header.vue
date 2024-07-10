@@ -15,7 +15,7 @@ const router = useRouter()
     
     <div class="right-content">
       <UserAvatar />
-      <MyButton @click="() => router.replace('/about')">关于</MyButton>
+      <MyButton @click="() => router.push('/about')" width="70px">关于</MyButton>
     </div>
   </header>
 </template>

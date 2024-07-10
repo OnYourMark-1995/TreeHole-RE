@@ -21,7 +21,7 @@ const blurHandler = () => {
     myFormItem.validate()
     isError.value = false
   } catch (error) {
-    console.log('error');
+    // console.log('error');
     isError.value = true
   }
 }

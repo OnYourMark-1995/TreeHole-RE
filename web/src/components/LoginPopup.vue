@@ -60,20 +60,19 @@ const loginHandler = async () => {
     if(!valid) return 
     
     try {
-      let result
+      let data
       if(isEmail(loginForm.value.usernameOrEmail)){
-        result = await userApi.loginByEmail(
+        ({ data } = await userApi.loginByEmail(
           loginForm.value.usernameOrEmail, 
           loginForm.value.password
-        )
+        ))
       }
       else {
-        result = await userApi.loginByUsername(
+        ({ data } = await userApi.loginByUsername(
           loginForm.value.usernameOrEmail, 
           loginForm.value.password
-        )
+        ))
       }
-      const { data } = result.data
       userStore.setLoginInfo(data)
 
       closePopup()
@@ -94,12 +93,11 @@ const registerHandler = async () => {
     if(!valid) return
 
     try {
-      const result = await userApi.register(
+      const { data } = await userApi.register(
         registerForm.value.username, 
         registerForm.value.email, 
         registerForm.value.password
       )
-      const { data } = result.data
 
       console.log(data);
       userStore.setLoginInfo(data)

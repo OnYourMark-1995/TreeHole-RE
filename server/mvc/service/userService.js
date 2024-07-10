@@ -4,7 +4,7 @@ const url = require('url')
 const userDao = require("../dao/userDao")
 const userSchemas = require("../../schema/userSchemas")
 const { jwtSign } = require("../../utils/jwtTool")
-const { AVATAR_IMG_URL_PREFIX } = require("../../config/avatarImgStorageConfig")
+const { AVATAR_IMG_URL_PREFIX, AVATAR_IMG_FOLDER } = require("../../config/avatarImgStorageConfig")
 const { DEFAULT_AVATAR_IMG } = require("../../config/userConfig")
 
 
@@ -109,9 +109,43 @@ const userService = {
     const { error, value } = userSchemas.updateInfo.validate(user)
     if(error) throw new Error("参数校验不通过")
 
+    let queryResult
+    
+    // 检查 新用户名 是否被其他用户占用
+    try {
+      queryResult = await userDao.selectUserIdByUsername(user.username)
+    } catch (error) {
+      console.log(error)
+      throw new Error("数据库操作异常，请稍后再试")
+    }
+    // 查询新用户名的结果不为空，并且查询到的 id 不为 当前用户的 id，说明
+    // 待更新的用户名已被占用。（如果 查询到的 id 等于 当前用户的 id，说明
+    // 用户更新个人信息并没有修改用户名，用户名还是原来那个） 
+    if(queryResult != null && queryResult.userId != user.userId){
+      throw new Error("用户名已被占用")
+    }
+
+    // 检查 新电子邮箱 是否已被占用
+    try {
+      queryResult = await userDao.selectUserIdByEmail(user.email)
+    } catch (error) {
+      console.log(error)
+      throw new Error("数据库操作异常，请稍后再试")
+    }
+    if(queryResult != null && queryResult.userId != user.userId){
+      throw new Error("电子邮箱已被占用")
+    }
+    
+    // 更新 用户数据
     try {
       await userDao.updateUserInfo(user)
+      return {
+        username: user.username,
+        email: user.email,
+        gender: user.gender 
+      }
     } catch (error) {
+      console.log(error);
       throw new Error("数据库操作异常，请稍后再试")
     }
   },
@@ -131,15 +165,19 @@ const userService = {
       throw new Error("数据库操作异常，请稍后再试")
     }
     
-    if(oldAvatarImg === DEFAULT_AVATAR_IMG){
-      return
+    // 删除原头像文件。如果原来的头像是默认头像（即注册后的初始头像），则不需要删除。
+    if(oldAvatarImg !== DEFAULT_AVATAR_IMG){
+      // TODO: 将删除文件的操作改为异步，不影响响应返回的速度。
+      try {
+        const fsResult = await fs.rm(path.join(AVATAR_IMG_FOLDER, oldAvatarImg))
+        console.log(fsResult);
+      } catch (error) {
+        console.log('头像文件删除异常：', error);
+      }
     }
-    try {
-      const fsResult = await fs.rm(path.join(AVATAR_IMG_FOLDER, oldAvatarImg))
-      console.log(fsResult);
-    } catch (error) {
-      console.log('头像文件删除异常：', error);
-    }
+
+    // 返回新头像图片的 URL
+    return { avatarImg: url.resolve(AVATAR_IMG_URL_PREFIX, newAvatarImgFileName) }
   }
 }
 

@@ -31,7 +31,7 @@ const props = defineProps({
       >
     </span>
     
-    <span class="my-radio-label">
+    <span class="my-radio-label-span">
       <slot>单选框Label</slot>
     </span>
   </label>
@@ -77,7 +77,7 @@ const props = defineProps({
 
   background-color: var(--theme_light_color);
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 50ms ease;
 }
 
 .my-radio.my-radio-checked  .my-radio-inner{
@@ -93,5 +93,10 @@ const props = defineProps({
   /* 隐藏原生的 input，设置绝对定位，使其脱离文档流，不占位置 */
   opacity: 0;
   position: absolute;
+}
+
+.my-radio-label-span{
+  color: var(--font_color_deep);
+  font-family: var(--font_family);
 }
 </style>

@@ -43,14 +43,14 @@ const submitHandler = async () => {
       new Date(), 
       userInfo.value.userId
     )
-    window.alert("消息发送成功")
+    NotifyEl.value.success("消息发送成功")
     messageContent.value = ''
   } catch (axiosError) {
     if(axiosError.code === 'ERR_NETWORK'){
-      window.alert("您的网络连接异常，请稍后再试！")
+      NotifyEl.value.error("您的网络连接异常，请稍后再试！")
     } else {
       const { data } = axiosError.response
-      window.alert(data.message)
+      NotifyEl.value.error(data.message)
     }
   }
   

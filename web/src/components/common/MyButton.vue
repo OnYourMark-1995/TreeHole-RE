@@ -1,14 +1,13 @@
 <script setup>
 const props = defineProps({
-  width: String,
-  height: String,
-  color: {
+  width: String, // 按钮宽度
+  height: String, // 按钮高度
+  color: { // 按钮颜色
     type: String,
     // default: 'var(--theme-light-color)'
   },
-  clickAction: Function,
-  plainStyle: Boolean, 
-  noBorder: Boolean
+  plainStyle: Boolean, // 朴素按钮样式
+  noBorder: Boolean // 无边框样式
 })
 
 /*  
@@ -46,8 +45,8 @@ const emits = defineEmits(['click'])
   box-sizing: border-box;
   padding: 5px 12px;
   border-radius: 8px;
-  border-width: 1px;
-  border-style: solid;
+  /* border-width: 1px;
+  border-style: solid; */
 
   font-size: 16px;
   font-family: var(--font_family);

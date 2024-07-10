@@ -110,7 +110,7 @@ const clickLike = () => {
 .message-username{
   white-space: nowrap;
   font-size: 20px;
-  color: var(--font_color);
+  color: var(--font_color_common);
   font-family: var(--font_family);
 }
 
@@ -142,8 +142,9 @@ const clickLike = () => {
 }
 
 .message-content{
-  color: var(--font_color);
+  color: var(--font_color_common);
   font-size: 16px;
   font-family: var(--font_family);
+  line-height: 1.5;
 }
 </style>

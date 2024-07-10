@@ -9,6 +9,7 @@ defineOptions({
 <template>
   <div class="about-page-content-wrap">
     <div class="about-page-content-inner-wrap">
+      
       <div class="top-part">
         <div class="top-part-content">
           <Logo height="28px"/>
@@ -16,6 +17,7 @@ defineOptions({
           <span class="about-page-title">简介</span>
         </div>
       </div>
+
       <div class="main-part">
         <p>
           &emsp;&emsp;你好，欢迎来到TreeHole，如你所见，这是一个实时树洞网页，你可以在这里看到他人发布的消息，你发表的消息也会被其他人看见，你可以在这里分享你的快乐，也可以宣泄你的烦恼。希望这个小小的网站能为你带来一点乐趣，为沉闷乏味的生活带来一点明亮的色彩。

@@ -105,6 +105,6 @@ const inputHandler = (event) => {
 
 .my-textarea:empty:after{
   content: attr(placeholder);
-  color: var(--ink_black);
+  color: var(--font_color_common);
 }
 </style>

@@ -1,4 +1,5 @@
 const { jwtVerify } = require("../utils/jwtTool")
+const { responseTool } = require("../utils/responseTool")
 
 /**
  * 一个函数，用于根据 isTokenNecessary 的值 定制 “处理请求头 token 的中间件”
@@ -22,12 +23,8 @@ module.exports = function checkTokenMiddleware (isTokenNecessary) {
         next()
         return
       }
-      res.status(401)
-      res.json({
-        code:4102,
-        message: '用户未登录',
-        data: null
-      })
+
+      responseTool.sendJson(res, 401, [4102, '用户未登录'])
       return
     }
     
@@ -40,12 +37,8 @@ module.exports = function checkTokenMiddleware (isTokenNecessary) {
         return
       }
       console.log(verifyResult.error);
-      res.status(401)
-      res.json({
-        code: 4103,
-        msg: 'token 校验失败',
-        data: null
-      })
+
+      responseTool.sendJson(res, 401, [4103, 'token 校验失败'])
       return
     }
   

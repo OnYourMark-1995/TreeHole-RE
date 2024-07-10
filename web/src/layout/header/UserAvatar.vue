@@ -1,7 +1,9 @@
 <script setup>
 import Avatar from '../../components/common/Avatar.vue';
-
 import Tip from '../../components/common/Tip.vue';
+import Menu from '../../components/menu/Menu.vue';
+import MenuItem from '../../components/menu/MenuItem.vue';
+
 import { computed, inject, ref } from 'vue';
 import useUserStore from '../../store/useUserStore';
 
@@ -22,7 +24,16 @@ const avatarImgUrl = computed(() => {
 
 const LoginPopupEl = inject('LoginPopupEl')
 
-// 点击 下拉框中的任意 li标签 都要收起下拉框，而不是只有路由跳转才收起
+const closeTip = () => {
+  isTipContentShow.value = false
+}
+
+const logoutHandler = () => {
+  // TODO:退出登录功能为完成
+
+  // 退出成功后，关闭下拉框
+  closeTip()
+}
 
 </script>
 
@@ -43,29 +54,12 @@ const LoginPopupEl = inject('LoginPopupEl')
     </template>
 
     <template #tip-content>
-      <ul class="drop-list">
-        <li class="drop-item">
-          <router-link to="/user">
-            我的主页
-          </router-link>
-        </li>
-
-        <li class="drop-item">
-          <router-link to="/setting">
-            设置
-          </router-link>
-        </li>
-
-        <li class="drop-item">
-          <router-link to="/about">
-            关于
-          </router-link>
-        </li>
-
-        <li class="drop-item">
-          退出登录
-        </li>
-      </ul>
+      <Menu vertical>
+        <MenuItem route="/user" @click="closeTip">我的主页</MenuItem>
+        <MenuItem route="/setting" @click="closeTip">设置</MenuItem>
+        <MenuItem route="/about" @click="closeTip">关于</MenuItem>
+        <MenuItem @click="logoutHandler">退出登录</MenuItem>
+      </Menu>
     </template>
   </Tip>
 </template>

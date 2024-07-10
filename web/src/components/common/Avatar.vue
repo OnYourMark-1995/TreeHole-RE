@@ -3,7 +3,7 @@ const props = defineProps({
   imgSrc: String, // 头像图片
   radius: { // 圆形外框的半径，css单位，px，wv，hv，%等都可以
     type: String,
-    default: '30px'
+    default: '40px'
   },
   borderColor: { // 边框颜色
     type: String,
@@ -20,7 +20,7 @@ const props = defineProps({
     type: String,
     default: 'var(--theme_light_color)'
   },
-  textFontSize: {
+  textFontSize: { // 文字模式 文字大小
     type: String,
     default: '20px'
   }
@@ -34,7 +34,13 @@ const props = defineProps({
     'border-color': borderColor,
     'background-color': textMode && textBackgroundColor,
   }">
-    <p v-if="textMode" :style="{ 'font-size': textFontSize }">{{ textContent }}</p>
+    <!-- 如果有默认插槽，展示默认插槽的内容 -->
+    <div v-if="$slots.default" class="avatar-content">
+      <slot></slot>
+    </div>
+    <!-- 如果是 文字模式，头像框中展示 文字 -->
+    <p v-else-if="textMode" :style="{ 'font-size': textFontSize }">{{ textContent }}</p>
+    <!-- 如果不是以上两种情况，展示头像图片 -->
     <img v-else :src="imgSrc" alt="avatar">
   </div>
 </template>
@@ -60,6 +66,11 @@ const props = defineProps({
 
 .avatar-wrap img{
   width: 100%;
-  /* height: 100%; */
+  height: 100%;
+}
+
+.avatar-content{
+  width: 100%;
+  height: 100%;
 }
 </style>

@@ -1,11 +1,13 @@
 <script setup>
+import { useRouter } from 'vue-router';
 
 const props = defineProps(['height'])
+
+const router = useRouter()
 </script>
 
 <template>
-  <div class="logo" :style="{ height: height }">
-    <!-- <img src="../../public/3/MikuTalk-01.jpg" alt=""> -->
+  <div @click="() => router.push('/home')" class="logo" :style="{ height: height }">
     <img src="../../public\3\TreeHole-01.jpg" alt="">
   </div>
 </template>
@@ -16,6 +18,7 @@ const props = defineProps(['height'])
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .logo img{

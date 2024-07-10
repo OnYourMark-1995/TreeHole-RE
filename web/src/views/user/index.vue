@@ -33,8 +33,6 @@ const modelMap = {
 const menuModel = ref('sended-message')
 
 const menuModelChange = (newValue) => {
-  console.log("click!", newValue)
-
   curMessageInfo = reactive(modelMap[newValue])
 }
 

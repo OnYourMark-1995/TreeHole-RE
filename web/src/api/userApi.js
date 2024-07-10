@@ -21,5 +21,17 @@ export default {
       email,
       password
     })
+  },
+
+  updateUserInfo: (userInfo) => {
+    return request.post('/user/update/info', {
+      username: userInfo.username,
+      email: userInfo.email,
+      gender: userInfo.gender
+    })
+  },
+
+  updateAvatarImg: (formData) => {
+    return request.post('/user/update/avatar', formData)
   }
 }

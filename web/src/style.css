@@ -14,7 +14,8 @@
   --theme_deep_color: var(--deep_scallion_green);
   --message_content_wrap_bg: var(--gray_1);
   --message_content_wrap_border: var(--gray_2);
-  --font_color: var(--ink_black);
+  --font_color_common: var(--ink_black);
+  --font_color_deep: #454545;
 
   --font_family: Inter,'PingFang SC',HarmonyOS_Medium,'Helvetica Neue','Microsoft YaHei',sans-serif;
   /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

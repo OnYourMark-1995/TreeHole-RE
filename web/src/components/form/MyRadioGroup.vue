@@ -26,9 +26,12 @@ import { provide, watch } from 'vue';
 import MyRadio from './MyRadio.vue';
 
 const radioGroupValue = defineModel('value', { required: true })
+
 const props = defineProps({
   options: Array, 
 })
+
+const emits = defineEmits(['change'])
 
 // 1. 如果传入了 options 则根据 options 中的选项渲染 MyRadio组件（使用 v-for 渲染）
 // 2. 如果没有传入 options，则将 radioGroupValue 提供给子组件（在插槽中）中的 
@@ -38,10 +41,11 @@ if(!props.options){
   provide('radioGroupValue', radioGroupValue)
 }
 
+// 当 单选框 的值 改变时，触发外部事件。
 watch(
   () => radioGroupValue.value, 
   (newValue) => {
-    console.log(newValue);
+    emits('change', newValue)
   }
 )
 

@@ -3,7 +3,7 @@ import { computed, inject, onMounted, provide, ref } from 'vue';
 
 const props = defineProps({
   label: String,
-  prop: String
+  prop: String // 用于参数校验。不需要参数校验时，无需填写。
 })
 
 // 获取 MyForm 提供的对象
@@ -54,15 +54,13 @@ const validate = () => {
   try {
     validator(fieldValue.value)
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     errorMessage.value = error.message
     throw error
   }
 }
 
-provide('myFormItem', {
-  validate,
-})
+provide('myFormItem', { validate })
 
 defineExpose({
   validate
@@ -101,6 +99,11 @@ defineExpose({
   align-self: center;
   vertical-align: middle;
   margin-right: 20px;
+}
+
+.my-form-label{
+  color: var(--font_color_deep);
+  font-family: var(--font_family);
 }
 
 .my-input-wrap{

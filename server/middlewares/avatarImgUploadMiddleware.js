@@ -1,9 +1,10 @@
 const multer = require('multer');
-const { AVATAR_IMG_FLODER, AVATAR_IMG_MAX_SIZE } = require('../config/avatarImgStorageConfig');
+const { AVATAR_IMG_FOLDER, AVATAR_IMG_MAX_SIZE, AVATAR_IMG_UPLOAD_FORM_NAME } = require('../config/avatarImgStorageConfig');
+const { responseTool } = require('../utils/responseTool')
 
 const storage = multer.diskStorage({
   // 头像图片保存位置
-  destination: AVATAR_IMG_FLODER,
+  destination: AVATAR_IMG_FOLDER,
   // 头像图片保存文件名
   filename: function (req, file, cb) {
     console.log('storage filename', file);
@@ -16,7 +17,7 @@ const storage = multer.diskStorage({
 
 // fileFilter 会对接收到的 每个文件 进行过滤处理
 const fileFilter = (req, file, cb) => {
-  console.log('filter', file);
+  console.log('filter an avatarImg', file);
   const mimetypeRegExp = new RegExp('^image\/(jpg|jpeg|png){1}', 'i')
   if(!mimetypeRegExp.test(file.mimetype)){
     // 图片文件不符合要求，抛出错误，并拒绝该文件
@@ -33,40 +34,28 @@ const upload = multer({
     fileSize: AVATAR_IMG_MAX_SIZE,
   },
   fileFilter: fileFilter,
-}).single('avatarImg')
+}).single(AVATAR_IMG_UPLOAD_FORM_NAME)
 
 const avatarImgUpload = (req, res ,next) => {
   upload(req, res, (error) => {
     if(!req.file){
-      res.json({
-        code: 4202,
-        message: "缺少头像图片文件，请上传头像图片",
-        data: null
-      })
+      responseTool.fail(res, [4204, "缺少头像图片文件，请上传头像图片"])
       return // 这里不要漏了return，否则会走下面的next()
     }
     
     if(error instanceof multer.MulterError) {
       //  捕捉 Multer 错误，使用 multer 对象下的 MulterError 类
       if(error.code === 'LIMIT_FILE_SIZE'){
-        res.status(400)
-        res.json({
-          code: 4203,
-          message: '头像上传失败，图片文件太大',
-          data: null
-        })
+        responseTool.fail(res, [4203, '头像上传失败，图片文件太大'])
         return // 这里不要漏了return，否则会走下面的next()
       }
+      // TODO: 考虑发生 除文件太大以外 的情况，是否会发生，是否要处理？
     }else if (error) {
       // 发生其他错误
-      res.status(400)
-      res.json({
-        code: 4204,
-        message: error.message,
-        data: null
-      })
+      responseTool.fail(res, [4204, error.message])
       return // 这里不要漏了return，否则会走下面的next()
     }
+
     console.log("middleware req return", req.file);
     // 无异常，调用next
     next()

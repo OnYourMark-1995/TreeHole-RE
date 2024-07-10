@@ -16,8 +16,7 @@ export default (leastKeyName, requestMessageApi) => {
     } 
 
     try {
-      const result = await requestMessageApi(leastKey)
-      const { data } = result.data
+      const { data } = await requestMessageApi(leastKey)
 
       hasMoreMessage = data.hasMoreMessage
 

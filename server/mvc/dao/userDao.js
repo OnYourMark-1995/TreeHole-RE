@@ -47,6 +47,20 @@ const userDao = {
 		return results
 	},
 
+	selectUserIdByUsername: async (username) => {
+		const sql = "SELECT user_id AS userId FROM user_table WHERE username = ? ;"
+
+		const results = await sqlExecuteTool.sqlExecute(sql, [username])
+		return results[0] || null
+	},
+
+	selectUserIdByEmail: async (email) => {
+		const sql = "SELECT user_id AS userId FROM user_table WHERE email = ? ;"
+
+		const results = await sqlExecuteTool.sqlExecute(sql, [email])
+		return results[0] || null
+	},
+
 	/**
 	 * 添加新的用户
 	 * @param {Object} user 包含username, password, email, avatarImg 的用户对象
@@ -82,6 +96,7 @@ const userDao = {
 	 * @param {Object} user 更新后的用户信息
 	 */
 	updateUserInfo: async (user) => {
+		// 邮箱 是否 应该允许更新？
 		const sql = "UPDATE user_table \
 				SET username = ?, email = ?, gender = ? \
 				WHERE user_id = ?"

@@ -36,7 +36,7 @@ LEFT JOIN like_detail_table ldt ON ldt.user_id = 1 AND mt.message_id = ldt.messa
 
 -- 根据 用户id 获取用户发送的消息
 SELECT mt.message_id messageId, mt.content, mt.`date`, mt.like_count likeCount, ut.avatar_img avatarImg, ut.username, ldt.like_detail_id likeDetailId 
-FROM (SELECT * FROM message_table WHERE message_id < 27 AND user_id = 1 ORDER BY message_id DESC LIMIT 10) mt
+FROM (SELECT * FROM message_table WHERE message_id < 4 AND user_id = 1 ORDER BY message_id DESC LIMIT 10) mt
 LEFT JOIN user_table ut ON mt.user_id = ut.user_id 
 LEFT JOIN like_detail_table ldt ON ldt.user_id = 1 AND mt.message_id = ldt.message_id ;
 
