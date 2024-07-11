@@ -41,7 +41,8 @@ provide('NotifyEl', NotifyEl)
 
 #main{
   flex: 1;
-  background-image: url('./assets/魔女宅急便壁纸.jpg');
+  /* background: url('./assets/魔女宅急便壁纸.jpg'); */
+  background: url('/images/background.jpg'); /* 背景放在public中，是静态公共文件 */
   background-position: center;
   background-size: cover;
   background-attachment: fixed;

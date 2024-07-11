@@ -5,8 +5,6 @@ import MyFormItem from './form/MyFormItem.vue';
 import MyInput from './form/MyInput.vue';
 import MyButton from './common/MyButton.vue';
 
-import warnIconImg from '../assets/warnIcon.png';
-
 import { provide, ref } from 'vue';
 import userApi from '../api/userApi';
 import useUserStore from '../store/useUserStore';
@@ -156,7 +154,7 @@ defineExpose({
         class="warn-message"
         :class="{ 'warn-message-hidden': warnMessage.length == 0}"
       >
-        <img class="warn-icon-img" :src="warnIconImg">
+        <img class="warn-icon-img" src="/images/warnIcon.png">
         {{ warnMessage }}
       </div>
     </div>

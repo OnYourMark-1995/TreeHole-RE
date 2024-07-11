@@ -2,8 +2,9 @@
 import { computed, inject, onMounted, provide, ref } from 'vue';
 
 const props = defineProps({
-  label: String,
-  prop: String // 用于参数校验。不需要参数校验时，无需填写。
+  label: String,  // 表单标签名
+  prop: String, // 用于参数校验。不需要参数校验时，无需填写。
+  infoMessage: String // 表单项提示
 })
 
 // 获取 MyForm 提供的对象
@@ -77,7 +78,16 @@ defineExpose({
 
     <div class="my-input-wrap">
       <slot></slot>
-      <span class="error-message">{{ errorMessage }}</span>
+      <span 
+        class="my-form-message"
+        :class="{
+          'error-message': errorMessage,
+          'info-message': !errorMessage && infoMessage
+        }"
+      >
+        {{ errorMessage || infoMessage }}
+      </span>
+      <!-- <span v-else-if="infoMessage" class="my-form-message info-message">{{ infoMessage }}</span> -->
     </div>
     
   </div>
@@ -111,14 +121,21 @@ defineExpose({
   position: relative;
 }
 
-.error-message{
+.my-form-message{
   position: absolute;
-  top: 30px;
+  /* top: 30px; */
+  bottom: -20px;
   left: 0;
 
-  color: red;
   font-size: 14px;
   font-family: var(--font_family);
 }
 
+.error-message{
+  color: red;
+}
+
+.info-message{
+  color: var(--font_color_deep);
+}
 </style>

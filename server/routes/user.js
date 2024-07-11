@@ -31,7 +31,7 @@ router.post('/login', async (req, res) => {
 })
 
 // 用户退出登录
-router.post('/loginout', (req, res) => {
+router.post('/logout', (req, res) => {
   res.json({})
 })
 
@@ -50,7 +50,7 @@ router.post('/update/info', checkTokenMiddleware(true), async (req, res) => {
     responseTool.success(res, [1201, '用户信息更新成功', data])
     
   } catch (error) {
-    responseTool.fail(res, [4201, "用户信息更新失败，" + error.message])
+    responseTool.fail(res, [4201, error.message])
   }
 })
 

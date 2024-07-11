@@ -113,7 +113,7 @@ const submitHandler = () => {
 
 <template>
   <MyForm ref="userInfoFromRef" :model="userInfoForm" :rules="rules">
-    <MyFormItem label="头像">
+    <MyFormItem label="头像" info-message="支持jpeg、jpg、png格式的图片，文件需小于1M">
       <ImgUpload 
         :origin-img="userInfo.avatarImg"
         ref="ImgUploadRef"

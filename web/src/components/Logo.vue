@@ -8,7 +8,7 @@ const router = useRouter()
 
 <template>
   <div @click="() => router.push('/home')" class="logo" :style="{ height: height }">
-    <img src="../../public\3\TreeHole-01.jpg" alt="">
+    <img src="/images/TreeHole-01.jpg" alt="">
   </div>
 </template>
 

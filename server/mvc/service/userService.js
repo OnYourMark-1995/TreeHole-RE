@@ -122,7 +122,7 @@ const userService = {
     // 待更新的用户名已被占用。（如果 查询到的 id 等于 当前用户的 id，说明
     // 用户更新个人信息并没有修改用户名，用户名还是原来那个） 
     if(queryResult != null && queryResult.userId != user.userId){
-      throw new Error("用户名已被占用")
+      throw new Error("用户名已被占用，用户信息更新失败")
     }
 
     // 检查 新电子邮箱 是否已被占用
@@ -133,7 +133,7 @@ const userService = {
       throw new Error("数据库操作异常，请稍后再试")
     }
     if(queryResult != null && queryResult.userId != user.userId){
-      throw new Error("电子邮箱已被占用")
+      throw new Error("电子邮箱已被占用，用户信息更新失败")
     }
     
     // 更新 用户数据

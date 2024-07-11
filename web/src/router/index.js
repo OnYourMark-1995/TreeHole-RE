@@ -1,6 +1,6 @@
 import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router';
 
-import Test from '../views/test/Test.vue';
+// import Test from '../views/test/Test.vue';
 import Home from '../views/home/index.vue';
 // const Home = () => import('../views/home/index.vue')
 import User from '../views/user/index.vue';
@@ -13,7 +13,7 @@ import PasswordChangeForm from '../views/setting/PasswordChangeForm.vue';
 import useUserStore from '../store/useUserStore';
 
 const routes = [
-  { path: '/', redirect: '/test' },
+  { path: '/', redirect: '/home' },
   { path: '/home', component: Home },
   {
     path: '/user', 
@@ -31,7 +31,7 @@ const routes = [
     ]
   },
   { path: '/about', component: About },
-  { path: '/test', component: Test },
+  // { path: '/test', component: Test },
 ]
 
 const router = createRouter({

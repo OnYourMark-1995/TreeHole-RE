@@ -6,9 +6,13 @@ import MenuItem from '../../components/menu/MenuItem.vue';
 
 import { computed, inject, ref } from 'vue';
 import useUserStore from '../../store/useUserStore';
+import { useRouter } from 'vue-router';
 
 const isTipContentShow = ref(false)
+
 const userStore = useUserStore()
+
+const router = useRouter()
 
 const isLogin = computed(() => {
   return userStore.token != ''
@@ -29,8 +33,9 @@ const closeTip = () => {
 }
 
 const logoutHandler = () => {
-  // TODO:退出登录功能为完成
-
+  // TODO:退出登录功能未完善，目前仅在前端清除了浏览器本地的 token
+  userStore.clearLoginInfo()
+  router.replace('/home')
   // 退出成功后，关闭下拉框
   closeTip()
 }
