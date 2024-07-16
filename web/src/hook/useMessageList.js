@@ -22,6 +22,18 @@ export default (leastKeyName, requestMessageApi) => {
 
       if(data.messageList.length > 0) {
         leastKey = data.messageList.at(-1)[leastKeyName]
+        // let promise = Promise.resolve()
+        
+        // for(const message of data.messageList){
+        //   promise = promise.then(() => {
+        //     return new Promise((resolve) => {
+        //       setTimeout(() => {
+        //         messageList.value.push(message)
+        //         resolve()
+        //       },50)
+        //     })
+        //   })
+        // }
         messageList.value.push(...data.messageList)
       }
 
@@ -29,7 +41,7 @@ export default (leastKeyName, requestMessageApi) => {
       console.log(axiosError);
       if(axiosError.code === 'ERR_NETWORK'){
         NotifyEl.value.error("您的网络连接异常，请稍后再试！")
-      } else {
+      } else if(axiosError?.response){
         const { data } = axiosError.response
         NotifyEl.value.error(data.message)
       }

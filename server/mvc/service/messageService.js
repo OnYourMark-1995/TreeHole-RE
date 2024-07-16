@@ -33,18 +33,28 @@ function messageFormat(message) {
 
 const messageService = {
   /**
-   * 客户端 与 服务器建立 Server-Sent Events 连接。
+   * 建立 客户端与服务器 Server-Sent Events 连接。
    * @param {*} res Express框架的 response 响应对象
    */
-  sseConnect: ( res ) => {
+  sseConnect: (req, res) => {
+    // TODO: 是否移除 req属性。原本监听了 req 的 close 事件，所以传递这个参数，但是后面发现只要监听 res 上的 close 事件即可，req不需要传递了。
     // TODO: 此处不涉及数据的处理，只是建立连接而已，考虑是否移到controller层，而不是在service层
-    SSETool.addConnection(res)
+    const sseConnection = SSETool.addConnection(req, res)
 
-    SSETool.sendJsonToConnection(res, {
-      code: 2003,
-      message: "connect success",
-      data: null
-    })
+    const responseResult = createResponseResult(2003, 'SSE 连接成功')
+    // SSETool.sendJsonToConnection(res, responseResult)
+    sseConnection.sendJson(responseResult)
+  },
+
+  /**
+   * 关闭 客户端与服务器 Server-Sent Events 连接。
+   * @param {*} lastEventId SSE 连接的 id
+   */
+  // TODO: 不确定用不用这个接口，因为如果网页是正常关闭的，
+  // 在前端设置了调用 EventSource对象的 close 方法，会断开连接，触发
+  // response 响应对象的 close 事件，那么就不需要前端发请求通知关闭连接了
+  sseClose: (lastEventId) => {
+    SSETool.removeConnection(lastEventId)
   },
 
   /**

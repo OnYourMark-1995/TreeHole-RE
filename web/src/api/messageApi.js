@@ -24,5 +24,10 @@ export default {
 
   getUserLikedMessage: (leastLikeDetailId) => {
     return request.post('/message/get-message/user/liked', { leastLikeDetailId })
-  }
+  },
+
+  // TODO:考虑是否要使用中。
+  // closeSSEConnection: (lastEventId) => {
+  //   return request.get(`/message/sse/close/${lastEventId}`)
+  // }
 }

@@ -3,10 +3,10 @@ import MessageCardList from '../../components/MessageCardList.vue';
 import MessageEditor from './MessageEditor.vue';
 import MessageGettingButton from '../../components/MessageGettingButton.vue';
 
-import { inject, onMounted, ref } from 'vue';
+import { inject, onMounted } from 'vue';
 import messageApi from '../../api/messageApi';
 
-import requestConfig from '../../config/request-config';
+import { SSE_CONNECTION_URL } from '../../config/request-config';
 import SSETool from '../../utils/SSETool';
 
 import useMessageList from '../../hook/useMessageList';
@@ -52,10 +52,10 @@ onMounted(async () => {
   await getMoreMessages()
 
   // 建立 Server-Sent Events 连接
-  const SSEConnect = new SSETool(`${requestConfig.BASE_URL}/message/sse-connect`)
+  const SSEConnect = new SSETool(SSE_CONNECTION_URL)
 
   SSEConnect.onJsonMessage((result) => {
-    console.log("get message", result);
+    console.log("get sse message", result);
     if(result.code == 2004){
       messageList.value.unshift(result.data)
     }

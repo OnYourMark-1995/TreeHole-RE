@@ -35,7 +35,11 @@ const closeTip = () => {
 const logoutHandler = () => {
   // TODO:退出登录功能未完善，目前仅在前端清除了浏览器本地的 token
   userStore.clearLoginInfo()
-  router.replace('/home')
+  
+  // router.replace('/home')
+  // 退出登录后，刷新整个网页。
+  router.go(0)
+
   // 退出成功后，关闭下拉框
   closeTip()
 }

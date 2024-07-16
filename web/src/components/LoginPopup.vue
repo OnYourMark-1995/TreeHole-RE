@@ -121,6 +121,13 @@ const closePopup = () => {
   isShowModel.value = false
 }
 
+// Popup 关闭时 调用。清除提示信息，否则下次打开会有上次打开的错误提示信息。
+// Popup 组件关闭时会销毁，但是挂载在App.vue 中的 LoginPopup 组件并不会销毁。
+// 毕竟 LoginPopup 组件 在 App.vue 中并没有用 v-if。
+const onPopupClose = () => {
+  warnMessage.value = ''
+}
+
 provide('LoginPopupEl', {
   open: openPopup,
   close: closePopup
@@ -134,7 +141,7 @@ defineExpose({
 </script>
 
 <template>
-  <Popup v-model:show="isShowModel" width="530px">
+  <Popup v-model:show="isShowModel" @close="onPopupClose" width="530px">
     <div class="tap-wrap">
       <div 
         @click="() => formMode = 'loginMode'" 

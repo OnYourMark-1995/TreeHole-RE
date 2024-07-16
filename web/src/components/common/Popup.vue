@@ -6,8 +6,11 @@ const props = defineProps({
   top: String
 });
 
+const emits = defineEmits(['close'])
+
 const closePopUp = () => {
   isShowModel.value = false
+  emits('close')
 }
 
 </script>

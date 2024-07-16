@@ -19,6 +19,7 @@ avatarImg-*
 Test.vue
 Test*.vue
 *_deprecated.*
+tree-hole-web-server
 
 # Editor directories and files
 .vscode/*

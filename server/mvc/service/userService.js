@@ -6,6 +6,7 @@ const userSchemas = require("../../schema/userSchemas")
 const { jwtSign } = require("../../utils/jwtTool")
 const { AVATAR_IMG_URL_PREFIX, AVATAR_IMG_FOLDER } = require("../../config/avatarImgStorageConfig")
 const { DEFAULT_AVATAR_IMG } = require("../../config/userConfig")
+const cryptPassword = require('../../utils/cryptPassword')
 
 
 const userService = {
@@ -36,7 +37,12 @@ const userService = {
 
     // 插入新用户数据
     try {
-      const insertResult = await userDao.insertUser(user)
+      // const insertResult = await userDao.insertUser(user)
+      const insertResult = await userDao.insertUser({
+        ...user,
+        password: process.env.NODE_ENV === 'production' ? cryptPassword(user.password) : user.password
+      })
+      
       const token = jwtSign({
         userId: insertResult.userId,
         username: insertResult.username
@@ -70,12 +76,14 @@ const userService = {
     if(error) throw new Error("参数校验不通过")
 
     let selectResults
+
+    const password = process.env.NODE_ENV === 'production' ? cryptPassword(user.password) : user.password
     try {
       if(user.username && user.username !== ''){
-        selectResults = await userDao.selectUserByUsernameAndPassword(user.username, user.password)
+        selectResults = await userDao.selectUserByUsernameAndPassword(user.username, password)
       } 
       else if (user.email && user.email !== '') {
-        selectResults = await userDao.selectUserByEmailAndPassword(user.email, user.password)
+        selectResults = await userDao.selectUserByEmailAndPassword(user.email, password)
       }
     } catch (error) {
       throw new Error("数据库操作异常，请稍后再试")

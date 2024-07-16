@@ -7,8 +7,17 @@ const moment = require('moment');
 const { responseTool } = require('../utils/responseTool');
 
 // 建立 sse 连接
-router.get('/sse-connect', function(req, res) {
-  messageService.sseConnect(res)
+router.get('/sse/connect', function(req, res) {
+  messageService.sseConnect(req, res)
+});
+
+// TODO: 这个 api 似乎没有必要使用，所以暂时没有使用。
+// 关闭 sse 连接
+router.get('/sse/close/:lastEventId', function(req, res) {
+  const lastEventId = req.params['lastEventId']
+  messageService.sseClose(lastEventId)
+
+  responseTool.success(res, [2007, 'SSE 连接断开'])
 });
 
 // 添加一条新消息，需要 token

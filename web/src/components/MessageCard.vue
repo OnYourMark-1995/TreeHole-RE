@@ -80,6 +80,8 @@ const clickLike = () => {
 
 .message-main-part {
   flex: 1;
+  /* 不设置 宽度为 0 的话，消息文本过宽时会溢出。详见：https://juejin.cn/post/6974356682574921765 */
+  width: 0;
 }
 
 .message-info-wrap{
@@ -146,5 +148,8 @@ const clickLike = () => {
   font-size: 16px;
   font-family: var(--font_family);
   line-height: 1.5;
+
+  word-wrap: break-word;
+  white-space: normal;
 }
 </style>

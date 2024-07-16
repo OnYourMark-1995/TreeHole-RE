@@ -20,7 +20,11 @@ provide('NotifyEl', NotifyEl)
   <Header id="header"/>
   <main id="main">
     <div class="main-content">
-      <router-view></router-view>
+      <router-view v-slot="{ Component }">
+        <KeepAlive include="Home">
+          <component :is="Component"/>
+        </KeepAlive>
+      </router-view>
     </div>
   </main>
   <Footer id="footer"/>
@@ -40,12 +44,17 @@ provide('NotifyEl', NotifyEl)
 }
 
 #main{
-  flex: 1;
+  /* flex: 1; */
   /* background: url('./assets/魔女宅急便壁纸.jpg'); */
   background: url('/images/background.jpg'); /* 背景放在public中，是静态公共文件 */
   background-position: center;
   background-size: cover;
   background-attachment: fixed;
+
+  /* 设置 最小高度为 视口高度，这样加上header和footer的高度，整个页面的高度
+  一定高于视口高度，一定会有滚动条。这样可以防止页面高度变化时，滚动条突然出现
+  或隐藏导致的页面抖动 */
+  min-height: 100vh;
 }
 
 #main .main-content{
